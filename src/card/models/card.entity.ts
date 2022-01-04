@@ -24,9 +24,9 @@ export class Card {
   @Column({ nullable: true })
   due_date_time: Date
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.created_cards)
   @JoinColumn({ name: 'creator_user_id' })
-  user: User;
+  creator: User;
 
   @ManyToOne(() => List, (list) => list.cards)
   @JoinColumn({ name: 'list_id' })

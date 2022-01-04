@@ -23,9 +23,9 @@ export class List {
   @CreateDateColumn()
   create_date_time: Date
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.created_lists)
   @JoinColumn({ name: 'creator_user_id' })
-  user: User;
+  creator: User;
 
   @ManyToOne(() => Board, (board) => board.lists)
   @JoinColumn({ name: 'board_id' })

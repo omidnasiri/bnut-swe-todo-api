@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn
 } from "typeorm";
+import { UserBoard } from "./user-board.entity";
 import { User } from "src/user/models/user.entity";
 import { List } from "src/list/models/list.entity";
 
@@ -23,12 +24,15 @@ export class Board {
 
   @Column()
   @CreateDateColumn()
-  create_date_time: Date
+  create_date_time: Date;
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.created_boards)
   @JoinColumn({ name: 'creator_user_id' })
-  user: User;
+  creator: User;
 
   @OneToMany(() => List, (list) => list.board)
   lists: List[];
+
+  @OneToMany(() => UserBoard, (userBoard) => userBoard.board)
+  joined_users: UserBoard[];
 }

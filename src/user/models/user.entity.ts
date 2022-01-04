@@ -5,10 +5,14 @@ import {
   PrimaryGeneratedColumn,
   OneToMany
 } from "typeorm";
+import { List } from "src/list/models/list.entity";
+import { Card } from "src/card/models/card.entity";
 import { Board } from "src/board/models/board.entity";
+import { UserBoard } from "src/board/models/user-board.entity";
 
 @Entity('users')
 export class User {
+
   @PrimaryGeneratedColumn("uuid")
   user_id: string;
 
@@ -26,8 +30,17 @@ export class User {
 
   @Column()
   @CreateDateColumn()
-  create_date_time: Date
+  create_date_time: Date;
 
-  @OneToMany(() => Board, (board) => board.user)
-  boards: Board[];
+  @OneToMany(() => Board, (board) => board.creator)
+  created_boards: Board[];
+
+  @OneToMany(() => List, (list) => list.creator)
+  created_lists: Board[];
+
+  @OneToMany(() => Card, (card) => card.creator)
+  created_cards: Board[];
+
+  @OneToMany(() => UserBoard, (userBoard) => userBoard.user)
+  joined_boards: UserBoard[];
 }

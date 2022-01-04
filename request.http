@@ -15,7 +15,7 @@ POST http://localhost:3000/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "omid@asdf.com",
+  "email": "123@asdf.com",
   "password": "asdf"
 }
 
@@ -31,6 +31,14 @@ Content-Type: application/json
 
 {
   "title": "University"
+}
+
+### Join a board
+POST http://localhost:3000/api/boards/join
+Content-Type: application/json
+
+{
+  "board_id": "76e1bdb7-8682-497e-a1ab-137faff8fce5"
 }
 
 ### Create a new list

@@ -3,9 +3,21 @@ POST http://localhost:3000/api/auth/signup
 Content-Type: application/json
 
 {
-  "firstname": "omid",
-  "lastname": "nasiri",
-  "email": "omid@asdf.com",
+  "firstname": "123",
+  "lastname": "456",
+  "email": "123@asdf.com",
   "password": "asdf",
   "password_confirm": "asdf"
 }
+
+### Sign in as an existing user
+POST http://localhost:3000/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "omid@asdf.com",
+  "password": "asdf"
+}
+
+### Get the currently signed is user
+GET http://localhost:3000/api/auth/whoami

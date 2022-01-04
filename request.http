@@ -24,3 +24,11 @@ GET http://localhost:3000/api/auth/whoami
 
 ### Sign out
 POST http://localhost:3000/api/auth/signout
+
+### Create a new board
+POST http://localhost:3000/api/boards
+Content-Type: application/json
+
+{
+  "title": "University"
+}

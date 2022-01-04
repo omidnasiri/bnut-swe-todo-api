@@ -2,8 +2,10 @@ import {
   Column,
   Entity,
   CreateDateColumn,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  OneToMany
 } from "typeorm";
+import { Board } from "src/board/models/board.entity";
 
 @Entity('users')
 export class User {
@@ -25,4 +27,7 @@ export class User {
   @Column()
   @CreateDateColumn()
   create_date_time: Date
+
+  @OneToMany(() => Board, (board) => board.user)
+  boards: Board[];
 }

@@ -23,7 +23,7 @@ export class AuthController {
   constructor(private userService: UserService) {}
 
   @Post('/signup')
-  async createUser(@Body() body: SignUpDto, @Session() Session: any) {
+  async register(@Body() body: SignUpDto, @Session() Session: any) {
     if (body.password !== body.password_confirm)
       throw new BadRequestException('Passwords do not match!');
 

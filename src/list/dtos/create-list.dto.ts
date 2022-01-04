@@ -1,6 +1,9 @@
 import { IsString } from "class-validator";
 
-export class CreateBoardDto {
+export class CreateListDto {
   @IsString()
   title: string;
+
+  @IsString()
+  board_id: string;
 }

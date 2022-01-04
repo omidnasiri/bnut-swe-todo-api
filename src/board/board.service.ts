@@ -14,4 +14,9 @@ export class BoardService {
     board.user = user;
     return this.repo.save(board);
   }
+
+  findOne(id: string) {
+    if (!id) return null;
+    return this.repo.findOne(id);
+  }
 }

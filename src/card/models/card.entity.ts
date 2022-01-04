@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  OneToMany,
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
@@ -10,25 +9,26 @@ import {
 import { User } from "src/user/models/user.entity";
 import { List } from "src/list/models/list.entity";
 
-@Entity('boards')
-export class Board {
+@Entity('card')
+export class Card {
   @PrimaryGeneratedColumn("uuid")
-  board_id: string;
+  card_id: string;
 
   @Column()
   title: string;
-
-  @Column({ default: true })
-  is_private: boolean;
 
   @Column()
   @CreateDateColumn()
   create_date_time: Date
 
+  @Column({ nullable: true })
+  due_date_time: Date
+
   @ManyToOne(() => User, (user) => user.boards)
   @JoinColumn({ name: 'creator_user_id' })
   user: User;
 
-  @OneToMany(() => List, (list) => list.board)
-  lists: List[];
+  @ManyToOne(() => List, (list) => list.cards)
+  @JoinColumn({ name: 'list_id' })
+  list: List;
 }

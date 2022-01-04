@@ -1,9 +1,13 @@
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException
+} from '@nestjs/common';
 import { promisify } from "util";
 import { Repository } from 'typeorm';
 import { User } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from "crypto";
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 const scrypt = promisify(_scrypt);
 
@@ -34,7 +38,7 @@ export class UserService {
     return user;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     if (!id) return null;
     return this.repo.findOne(id);
   }

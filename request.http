@@ -1,0 +1,11 @@
+### Create a new user
+POST http://localhost:3000/api/auth/signup
+Content-Type: application/json
+
+{
+  "firstname": "omid",
+  "lastname": "nasiri",
+  "email": "omid@asdf.com",
+  "password": "asdf",
+  "password_confirm": "asdf"
+}

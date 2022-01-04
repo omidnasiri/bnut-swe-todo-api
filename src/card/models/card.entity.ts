@@ -26,9 +26,9 @@ export class Card {
 
   @ManyToOne(() => User, (user) => user.created_cards)
   @JoinColumn({ name: 'creator_user_id' })
-  creator: User;
+  creator: Promise<User>;
 
   @ManyToOne(() => List, (list) => list.cards)
   @JoinColumn({ name: 'list_id' })
-  list: List;
+  list: Promise<List>;
 }

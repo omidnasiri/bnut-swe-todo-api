@@ -33,14 +33,14 @@ export class User {
   create_date_time: Date;
 
   @OneToMany(() => Board, (board) => board.creator)
-  created_boards: Board[];
+  created_boards: Promise<Board[]>;
 
   @OneToMany(() => List, (list) => list.creator)
-  created_lists: Board[];
+  created_lists: Promise<Board[]>;
 
   @OneToMany(() => Card, (card) => card.creator)
-  created_cards: Board[];
+  created_cards: Promise<Board[]>;
 
   @OneToMany(() => UserBoard, (userBoard) => userBoard.user)
-  joined_boards: UserBoard[];
+  joined_boards: Promise<UserBoard[]>;
 }

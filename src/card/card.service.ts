@@ -21,8 +21,8 @@ export class CardService {
     if (!list) throw new NotFoundException('list not found');
 
     const card = this.repo.create(createCardDto);
-    card.creator = user;
-    card.list = list;
+    card.creator = Promise.resolve(user);
+    card.list = Promise.resolve(list);
     return this.repo.save(card);
   }
 

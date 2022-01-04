@@ -21,8 +21,8 @@ export class ListService {
     if (!board) throw new NotFoundException('board not found');
 
     const list = this.repo.create(createListDto);
-    list.creator = user;
-    list.board = board;
+    list.creator = Promise.resolve(user);
+    list.board = Promise.resolve(board);
     return this.repo.save(list);
   }
 

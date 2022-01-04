@@ -13,6 +13,7 @@ import { List } from "src/list/models/list.entity";
 
 @Entity('boards')
 export class Board {
+
   @PrimaryGeneratedColumn("uuid")
   board_id: string;
 
@@ -28,11 +29,11 @@ export class Board {
 
   @ManyToOne(() => User, (user) => user.created_boards)
   @JoinColumn({ name: 'creator_user_id' })
-  creator: User;
+  creator: Promise<User>;
 
   @OneToMany(() => List, (list) => list.board)
-  lists: List[];
+  lists: Promise<List[]>;
 
   @OneToMany(() => UserBoard, (userBoard) => userBoard.board)
-  joined_users: UserBoard[];
+  joined_users: Promise<UserBoard[]>;
 }

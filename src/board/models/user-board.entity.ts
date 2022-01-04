@@ -24,9 +24,9 @@ export class UserBoard {
 
   @ManyToOne(() => User, (user) => user.joined_boards, { primary: true })
   @JoinColumn({ name: "user_id" })
-  user: User;
+  user: Promise<User>;
 
   @ManyToOne(() => Board, (board) => board.joined_users, { primary: true })
   @JoinColumn({ name: "board_id" })
-  board: Board;
+  board: Promise<Board>;
 }

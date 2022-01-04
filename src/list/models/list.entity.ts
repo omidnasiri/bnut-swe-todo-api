@@ -25,12 +25,12 @@ export class List {
 
   @ManyToOne(() => User, (user) => user.created_lists)
   @JoinColumn({ name: 'creator_user_id' })
-  creator: User;
+  creator: Promise<User>;
 
   @ManyToOne(() => Board, (board) => board.lists)
   @JoinColumn({ name: 'board_id' })
-  board: Board;
+  board: Promise<Board>;
 
   @OneToMany(() => Card, (card) => card.list)
-  cards: Card[];
+  cards: Promise<Card[]>;
 }

@@ -1,0 +1,8 @@
+### Create a new list
+POST http://localhost:3000/api/lists
+Content-Type: application/json
+
+{
+  "title": "Projects3",
+  "board_id": "66f398d8-b7bc-495e-a620-97d72cf67b58"
+}

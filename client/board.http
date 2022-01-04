@@ -1,0 +1,18 @@
+### Create a new board
+POST http://localhost:3000/api/boards
+Content-Type: application/json
+
+{
+  "title": "University"
+}
+
+### Join a board
+POST http://localhost:3000/api/boards/join
+Content-Type: application/json
+
+{
+  "board_id": "03d2ec47-f8c9-42b0-9584-7a78dc800400"
+}
+
+### Get all boards of a user
+GET http://localhost:3000/api/boards

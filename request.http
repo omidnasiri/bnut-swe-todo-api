@@ -21,3 +21,6 @@ Content-Type: application/json
 
 ### Get the currently signed is user
 GET http://localhost:3000/api/auth/whoami
+
+### Sign out
+POST http://localhost:3000/api/auth/signout

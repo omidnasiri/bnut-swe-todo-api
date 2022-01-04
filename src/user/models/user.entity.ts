@@ -1,5 +1,9 @@
-import { Exclude } from "class-transformer";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  CreateDateColumn,
+  PrimaryGeneratedColumn
+} from "typeorm";
 
 @Entity('users')
 export class User {

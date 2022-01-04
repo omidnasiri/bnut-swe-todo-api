@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   Session,
+  HttpCode,
   UseGuards,
   Controller,
   BadRequestException
@@ -21,12 +22,6 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 export class AuthController {
   constructor(private userService: UserService) {}
 
-  @Get('/whoami')
-  @UseGuards(AuthGuard)
-  whoami(@currentUser() user: User) {
-    return user;
-  }
-
   @Post('/signup')
   async createUser(@Body() body: SignUpDto, @Session() Session: any) {
     if (body.password !== body.password_confirm)
@@ -38,9 +33,23 @@ export class AuthController {
   }
 
   @Post('/signin')
+  @HttpCode(200)
   async signin(@Body() body: SignInDto, @Session() Session: any) {
     const user = await this.userService.login(body.email, body.password);
     Session.userId = user.user_id;
     return user;
+  }
+
+  @Get('/whoami')
+  @HttpCode(200)
+  @UseGuards(AuthGuard)
+  whoami(@currentUser() user: User) {
+    return user;
+  }
+
+  @Post('/signout')
+  @HttpCode(204)
+  signout(@Session() Session: any) {
+    Session.userId = null;
   }
 }

@@ -2,20 +2,30 @@ import {
   Get,
   Body,
   Post,
+  Patch,
   UseGuards,
   Controller
 } from '@nestjs/common';
 import { User } from './models/user.entity';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { UserDto } from './dtos/responst-dtos/user-dto';
 import { FriendDto } from './dtos/responst-dtos/friend-dto';
 import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
 import { currentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Patch()
+  @UseGuards(AuthGuard)
+  @Serialize(UserDto)
+  updateUser(@currentUser() user: User, @Body() body: UpdateUserDto) {
+    return this.userService.updateUser(body, user);
+  }
 
   @Post('/firends')
   @UseGuards(AuthGuard)

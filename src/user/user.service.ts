@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from "crypto";
 import { FriendStatus, Firend } from './models/friend.entity';
 import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
+import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -43,6 +44,12 @@ export class UserService {
 
     if (storedHash != hash.toString('hex')) throw new BadRequestException('bad password');
     return user;
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto, user: User) {
+    user.firstname = updateUserDto.firstname;
+    user.lastname = updateUserDto.lastname;
+    return this.userRepo.save(user);
   }
 
   async friend(addFriendDto: AddFriendDto, user: User) {

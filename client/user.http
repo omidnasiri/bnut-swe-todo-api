@@ -1,3 +1,12 @@
+### Update user info
+PATCH http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "firstname": "bkjb",
+  "lastname": "jbig"
+}
+
 ### Add friendship status
 POST http://localhost:3000/api/users/firends
 Content-Type: application/json

@@ -1,7 +1,6 @@
 import {
   IsEmail,
-  IsString,
-  IsNotEmpty
+  IsString
 } from "class-validator";
 
 export class SignInDto {

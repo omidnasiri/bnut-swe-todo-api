@@ -95,15 +95,21 @@ export class UserService {
   }
 
   async getFriends(user: User) {
-    const res = await this.firendRepo.find({
+    return await this.firendRepo.find({
       where: [
         { alpha_user_id: user.user_id, status: FriendStatus.Friend },
         { beta_user_id: user.user_id, status: FriendStatus.Friend }
       ]
     });
+  }
 
-    console.log(res);
-    return res;
+  async getFriendRequests(user: User) {
+    return await this.firendRepo.find({
+      where: [
+        { alpha_user_id: user.user_id, status: FriendStatus.Requseted },
+        { beta_user_id: user.user_id, status: FriendStatus.Requseted }
+      ]
+    });
   }
 
   findOne(id: string) {

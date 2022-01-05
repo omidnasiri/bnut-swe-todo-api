@@ -9,3 +9,6 @@ Content-Type: application/json
 
 ### Get all friends
 GET http://localhost:3000/api/users/firends
+
+### Get all friend reqeusts
+GET http://localhost:3000/api/users/firends/requests

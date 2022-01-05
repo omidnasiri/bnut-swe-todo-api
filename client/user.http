@@ -1,0 +1,8 @@
+### Create a new list
+POST http://localhost:3000/api/users/firends
+Content-Type: application/json
+
+{
+  "user_id": "e135cb72-46fa-48cb-aeb0-74d9df51025d",
+  "status": 1
+}

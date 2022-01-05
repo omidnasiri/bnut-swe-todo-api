@@ -41,7 +41,7 @@ export class BoardController {
     return await this.boardService.findByUser(user);
   }
 
-  @Post()
+  @Post('/lists')
   @UseGuards(AuthGuard)
   @Serialize(ListDto)
   async createList(@currentUser() user: User, @Body() body: CreateListDto) {

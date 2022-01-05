@@ -15,6 +15,7 @@ import { BoardModule } from './board/board.module';
 import { Board } from './board/models/board.entity';
 import { UserCard } from './card/models/user-card.entity';
 import { UserBoard } from './board/models/user-board.entity';
+import { Firend } from './user/models/friend.entity';
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -27,8 +28,9 @@ const cookieSession = require('cookie-session');
         List,
         Card,
         Board,
+        Firend,
         UserCard,
-        UserBoard
+        UserBoard,
       ],
       synchronize: true
     }),

@@ -9,7 +9,7 @@ import {
 import { Board } from "./board.entity";
 import { User } from "src/user/models/user.entity";
 
-@Entity('user_joined_board')
+@Entity('user_joined_boards')
 export class UserBoard {
 
   @PrimaryColumn()

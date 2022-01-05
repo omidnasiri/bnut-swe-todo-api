@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { SignUpDto } from './dtos/signup-dto';
 import { SignInDto } from './dtos/signin-dto';
-import { UserDto } from 'src/user/dtos/user-dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { User } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/user.service';
+import { UserDto } from 'src/user/dtos/responst-dtos/user-dto';
 import { currentUser } from './decorators/current-user.decorator';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 
@@ -25,7 +25,7 @@ export class AuthController {
   @Post('/signup')
   async register(@Body() body: SignUpDto, @Session() Session: any) {
     if (body.password !== body.password_confirm)
-      throw new BadRequestException('Passwords do not match!');
+      throw new BadRequestException('passwords do not match');
 
     const user = await this.userService.register(body.firstname, body.lastname, body.email, body.password);
     Session.userId = user.user_id;

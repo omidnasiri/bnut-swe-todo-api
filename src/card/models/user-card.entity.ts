@@ -9,7 +9,7 @@ import {
 import { Card } from "./card.entity";
 import { User } from "src/user/models/user.entity";
 
-@Entity('user_assigned_card')
+@Entity('user_assigned_cards')
 export class UserCard {
 
   @PrimaryColumn()

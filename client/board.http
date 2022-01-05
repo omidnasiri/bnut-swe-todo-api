@@ -16,3 +16,12 @@ Content-Type: application/json
 
 ### Get all boards of a user
 GET http://localhost:3000/api/boards
+
+### Create a new list
+POST http://localhost:3000/api/boards/lists
+Content-Type: application/json
+
+{
+  "title": "Projects3",
+  "board_id": "66f398d8-b7bc-495e-a620-97d72cf67b58"
+}

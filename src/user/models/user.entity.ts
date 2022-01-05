@@ -1,12 +1,13 @@
 import {
   Column,
   Entity,
+  OneToMany,
   CreateDateColumn,
-  PrimaryGeneratedColumn,
-  OneToMany
+  PrimaryGeneratedColumn
 } from "typeorm";
-import { List } from "src/board/models/list.entity";
+import { Firend } from "./friend.entity";
 import { Card } from "src/card/models/card.entity";
+import { List } from "src/board/models/list.entity";
 import { Board } from "src/board/models/board.entity";
 import { UserCard } from "src/card/models/user-card.entity";
 import { UserBoard } from "src/board/models/user-board.entity";
@@ -47,4 +48,10 @@ export class User {
 
   @OneToMany(() => UserCard, (userCard) => userCard.user)
   assigned_cards: Promise<UserCard[]>;
+
+  @OneToMany(() => Firend, (userFirends) => userFirends.alpha)
+  alpha: Promise<Firend[]>;
+
+  @OneToMany(() => Firend, (userFirends) => userFirends.beta)
+  beta: Promise<Firend[]>;
 }

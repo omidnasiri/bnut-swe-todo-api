@@ -1,19 +1,18 @@
 import {
-  BadRequestException,
-  ForbiddenException,
   Injectable,
-  NotFoundException
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Card } from './models/card.entity';
 import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ListService } from 'src/list/list.service';
 import { UserService } from 'src/user/user.service';
 import { UserCard } from './models/user-card.entity';
-import { CreateCardDto } from './dtos/create-card.dto';
-import { AssignCardDto } from './dtos/assign-card.dto';
 import { BoardService } from 'src/board/board.service';
+import { CreateCardDto } from './dtos/request-dtos/create-card.dto';
+import { AssignCardDto } from './dtos/request-dtos/assign-card.dto';
 
 @Injectable()
 export class CardService {
@@ -21,12 +20,11 @@ export class CardService {
     @InjectRepository(UserCard) private userCardRepo: Repository<UserCard>,
     @InjectRepository(Card) private cardRepo: Repository<Card>,
     private boardService: BoardService,
-    private listService: ListService,
     private userService: UserService
   ) { }
 
   async create(createCardDto: CreateCardDto, user: User) {
-    const list = await this.listService.findOne(createCardDto.list_id);
+    const list = await this.boardService.findList(createCardDto.list_id);
     if (!list) throw new NotFoundException('list not found');
 
     const card = this.cardRepo.create(createCardDto);
@@ -60,6 +58,10 @@ export class CardService {
     const userCard = this.userCardRepo.create(assignCardDto);
     return this.userCardRepo.save(userCard);
   }
+
+  async findByUser() {}
+
+  async findByBoard() {}
 
   findOne(id: string) {
     if (!id) return null;

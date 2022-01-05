@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { UserBoard } from "./user-board.entity";
 import { User } from "src/user/models/user.entity";
-import { List } from "src/list/models/list.entity";
+import { List } from "src/board/models/list.entity";
 
 @Entity('boards')
 export class Board {

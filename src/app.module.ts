@@ -6,12 +6,11 @@ import {
 import { APP_PIPE } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { ListModule } from './list/list.module';
 import { CardModule } from './card/card.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { List } from './list/models/list.entity';
 import { User } from './user/models/user.entity';
 import { Card } from './card/models/card.entity';
+import { List } from './board/models/list.entity';
 import { BoardModule } from './board/board.module';
 import { Board } from './board/models/board.entity';
 import { UserCard } from './card/models/user-card.entity';
@@ -35,9 +34,8 @@ const cookieSession = require('cookie-session');
     }),
     UserModule,
     AuthModule,
-    BoardModule,
-    ListModule,
-    CardModule
+    CardModule,
+    BoardModule
   ],
   providers: [
     {

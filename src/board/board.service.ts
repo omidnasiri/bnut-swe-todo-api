@@ -5,29 +5,42 @@ import {
   BadRequestException
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { List } from './models/list.entity';
 import { Board } from './models/board.entity';
 import { User } from 'src/user/models/user.entity';
-import { GetBoardDto } from './dtos/get-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JoinBoardDto } from './dtos/join-board.dto';
 import { UserBoard } from './models/user-board.entity';
-import { CreateBoardDto } from './dtos/create-board.dto';
+import { GetBoardDto } from './dtos/response-dtos/get-board.dto';
+import { JoinBoardDto } from './dtos/request-dtos/join-board.dto';
+import { CreateListDto } from './dtos/request-dtos/create-list.dto';
+import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
 
 @Injectable()
 export class BoardService {
   constructor(
+    @InjectRepository(List) private listRepo: Repository<List>,
     @InjectRepository(Board) private boardRepo: Repository<Board>,
     @InjectRepository(UserBoard) private userBoardRepo: Repository<UserBoard>
     ) { }
 
-  create(createBoardDto: CreateBoardDto, user: User) {
+  async createList(createListDto: CreateListDto, user: User) {
+    const board = await this.findBoard(createListDto.board_id);
+    if (!board) throw new NotFoundException('board not found');
+
+    const list = this.listRepo.create(createListDto);
+    list.creator = Promise.resolve(user);
+    list.board = Promise.resolve(board);
+    return this.listRepo.save(list);
+  }
+
+  createBoard(createBoardDto: CreateBoardDto, user: User) {
     const board = this.boardRepo.create(createBoardDto);
     board.creator = Promise.resolve(user);
     return this.boardRepo.save(board);
   }
 
   async join(joinBoardDto: JoinBoardDto, user: User) {
-    const board = await this.findOne(joinBoardDto.board_id);
+    const board = await this.findBoard(joinBoardDto.board_id);
     if (!board) throw new NotFoundException('board not found');
 
     if ((await board.creator).user_id === user.user_id)
@@ -63,8 +76,13 @@ export class BoardService {
     return boards;
   }
 
-  findOne(id: string) {
+  findBoard(id: string) {
     if (!id) return null;
     return this.boardRepo.findOne(id);
+  }
+
+  findList(id: string) {
+    if (!id) return null;
+    return this.listRepo.findOne(id);
   }
 }

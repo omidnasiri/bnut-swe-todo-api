@@ -1,12 +1,17 @@
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Board } from './models/board.entity';
 import { User } from 'src/user/models/user.entity';
+import { GetBoardDto } from './dtos/get-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JoinBoardDto } from './dtos/join-board.dto';
 import { UserBoard } from './models/user-board.entity';
 import { CreateBoardDto } from './dtos/create-board.dto';
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { GetBoardDto } from './dtos/get-board.dto';
 
 @Injectable()
 export class BoardService {
@@ -25,9 +30,12 @@ export class BoardService {
     const board = await this.findOne(joinBoardDto.board_id);
     if (!board) throw new NotFoundException('board not found');
 
-    if ((await board.creator).user_id === user.user_id) throw new ForbiddenException('user is creator');
+    if ((await board.creator).user_id === user.user_id)
+      throw new ForbiddenException('user is creator');
 
-    const userBoards = await this.userBoardRepo.find({ where: { user_id: user.user_id, board_id: board.board_id } });
+    const userBoards = await this.userBoardRepo.find({
+      where: { user_id: user.user_id, board_id: board.board_id }
+    });
     if (userBoards.length) throw new BadRequestException('already joined');
 
     const userBoard = this.userBoardRepo.create(joinBoardDto);

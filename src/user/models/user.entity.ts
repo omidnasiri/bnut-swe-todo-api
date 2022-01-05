@@ -9,6 +9,7 @@ import { List } from "src/list/models/list.entity";
 import { Card } from "src/card/models/card.entity";
 import { Board } from "src/board/models/board.entity";
 import { UserBoard } from "src/board/models/user-board.entity";
+import { UserCard } from "src/card/models/user-card.entity";
 
 @Entity('users')
 export class User {
@@ -43,4 +44,7 @@ export class User {
 
   @OneToMany(() => UserBoard, (userBoard) => userBoard.user)
   joined_boards: Promise<UserBoard[]>;
+
+  @OneToMany(() => UserCard, (userCard) => userCard.user)
+  assigned_cards: Promise<UserCard[]>;
 }

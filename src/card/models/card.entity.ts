@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   JoinColumn,
   CreateDateColumn,
   PrimaryGeneratedColumn
 } from "typeorm";
+import { UserCard } from "./user-card.entity";
 import { User } from "src/user/models/user.entity";
 import { List } from "src/list/models/list.entity";
 
@@ -31,4 +33,7 @@ export class Card {
   @ManyToOne(() => List, (list) => list.cards)
   @JoinColumn({ name: 'list_id' })
   list: Promise<List>;
+
+  @OneToMany(() => UserCard, (userCard) => userCard.card)
+  assigned_users: Promise<UserCard[]>;
 }

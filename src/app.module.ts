@@ -14,6 +14,7 @@ import { User } from './user/models/user.entity';
 import { Card } from './card/models/card.entity';
 import { BoardModule } from './board/board.module';
 import { Board } from './board/models/board.entity';
+import { UserCard } from './card/models/user-card.entity';
 import { UserBoard } from './board/models/user-board.entity';
 const cookieSession = require('cookie-session');
 
@@ -22,7 +23,14 @@ const cookieSession = require('cookie-session');
       TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [User, Board, List, Card, UserBoard],
+      entities: [
+        User,
+        List,
+        Card,
+        Board,
+        UserCard,
+        UserBoard
+      ],
       synchronize: true
     }),
     UserModule,

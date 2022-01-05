@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
   BadRequestException,
   InternalServerErrorException
 } from '@nestjs/common';
@@ -45,6 +46,8 @@ export class UserService {
   }
 
   async friend(addFriendDto: AddFriendDto, user: User) {
+    if (addFriendDto.user_id === user.user_id) throw new ForbiddenException();
+
     const beta = await this.findOne(addFriendDto.user_id);
     if (!beta) throw new NotFoundException('user not found');
 
@@ -89,6 +92,18 @@ export class UserService {
     }
     
     return this.firendRepo.save(friend);
+  }
+
+  async getFriends(user: User) {
+    const res = await this.firendRepo.find({
+      where: [
+        { alpha_user_id: user.user_id, status: FriendStatus.Friend },
+        { beta_user_id: user.user_id, status: FriendStatus.Friend }
+      ]
+    });
+
+    console.log(res);
+    return res;
   }
 
   findOne(id: string) {

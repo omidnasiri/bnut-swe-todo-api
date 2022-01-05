@@ -1,9 +1,9 @@
 import {
+  Get,
   Body,
   Post,
   UseGuards,
-  Controller,
-  ForbiddenException
+  Controller
 } from '@nestjs/common';
 import { User } from './models/user.entity';
 import { UserService } from './user.service';
@@ -21,9 +21,13 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Serialize(FriendDto)
   async friend(@currentUser() user: User, @Body() body: AddFriendDto) {
-    if (body.user_id === user.user_id)
-      throw new ForbiddenException();
-
     return await this.userService.friend(body, user);
+  }
+
+  @Get('/firends')
+  @UseGuards(AuthGuard)
+  @Serialize(FriendDto)
+  async getfriends(@currentUser() user: User) {
+    return await this.userService.getFriends(user);
   }
 }

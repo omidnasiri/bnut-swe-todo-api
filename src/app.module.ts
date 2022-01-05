@@ -13,9 +13,9 @@ import { Card } from './card/models/card.entity';
 import { List } from './board/models/list.entity';
 import { BoardModule } from './board/board.module';
 import { Board } from './board/models/board.entity';
+import { Firend } from './user/models/friend.entity';
 import { UserCard } from './card/models/user-card.entity';
 import { UserBoard } from './board/models/user-board.entity';
-import { Firend } from './user/models/friend.entity';
 const cookieSession = require('cookie-session');
 
 @Module({

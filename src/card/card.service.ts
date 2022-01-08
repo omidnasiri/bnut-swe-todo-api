@@ -27,8 +27,7 @@ export class CardService {
     const list = await this.boardService.findList(createCardDto.list_id);
     if (!list) throw new NotFoundException('list not found');
 
-    let boards = await this.boardService.findByUser(user);
-    if (!boards.some(async b => b.board_id == (await list.board).board_id))
+    if (!await this.boardService.memberCheck(user, (await list.board).board_id))
       throw new ForbiddenException();
 
     const card = this.cardRepo.create(createCardDto);
@@ -49,14 +48,10 @@ export class CardService {
     });
     if (userBoards.length) throw new BadRequestException('already assigned');
 
-    const currentBoardId = (await (await card.list).board).board_id;
-
-    let boards = await this.boardService.findByUser(user);
-    if (!boards.some(b => b.board_id == currentBoardId))
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
       throw new ForbiddenException();
 
-    boards = await this.boardService.findByUser(assignedUser);
-    if (!boards.some(b => b.board_id == currentBoardId))
+    if (!await this.boardService.memberCheck(assignedUser, (await (await card.list).board).board_id))
       throw new BadRequestException('user not in board');
 
     const userCard = this.userCardRepo.create(assignCardDto);

@@ -27,10 +27,7 @@ export class BoardService {
     const board = await this.findBoard(createListDto.board_id);
     if (!board) throw new NotFoundException('board not found');
 
-    let boards = await this.findByUser(user);
-    console.log(boards.filter(b => b.board_id == board.board_id));
-    
-    if (!boards.some(b => b.board_id == board.board_id))
+    if (!await this.memberCheck(user, board.board_id))
       throw new ForbiddenException();
 
     const list = this.listRepo.create(createListDto);
@@ -100,6 +97,20 @@ export class BoardService {
       ...mappedJoinedBoards
     ]
     return boards;
+  }
+
+  async memberCheck(user: User, boardId: string): Promise<boolean> {
+    const createdBoard = await this.boardRepo.findOne({
+      where: { creator: user, board_id: boardId }
+    });
+    if (createdBoard) return true;
+
+    const joinedBored = await this.userBoardRepo.findOne({
+      where: { user_id: user.user_id, board_id: boardId }
+    });
+    if (joinedBored) return true;
+
+    return false;
   }
 
   findBoard(id: string) {

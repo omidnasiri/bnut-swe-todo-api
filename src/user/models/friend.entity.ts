@@ -34,8 +34,8 @@ export class Firend {
 }
 
 export enum FriendStatus {
-  Friend,
   Neutal,
+  Requseted,
+  Friend,
   Blocked,
-  Requseted
 }

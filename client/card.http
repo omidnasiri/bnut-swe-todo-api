@@ -1,18 +1,18 @@
 ### Create a new card
-POST http://localhost:3000/api/cards
+POST http://localhost:4000/api/cards
 Content-Type: application/json
 
 {
   "title": "Software Engineering",
-  "list_id": "a12d94d2-252a-4bec-9412-a95977c13043",
+  "list_id": "6b1fb5f4-03e6-49b6-8c0e-2a693a7b456a",
   "due_date_time": "Wed, 21 Oct 2015 18:27:50 GMT"
 }
 
 ### Assign a card
-POST http://localhost:3000/api/cards/assign
+POST http://localhost:4000/api/cards/assign
 Content-Type: application/json
 
 {
-  "card_id": "a12d94d2-252a-4bec-9412-a95977c13043",
-  "user_id": "a12d94d2-252a-4bec-9412-a95977c13043"
+  "card_id": "7feffe2d-4976-4d9d-96fe-c70460995fde",
+  "user_id": "ed93b910-5141-41f8-8933-5caea6bc9907"
 }

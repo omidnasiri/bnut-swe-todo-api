@@ -1,27 +1,28 @@
 ### Create a new board
-POST http://localhost:3000/api/boards
+POST http://localhost:4000/api/boards
 Content-Type: application/json
 
 {
-  "title": "University"
+  "title": "Movies",
+  "is_private": false
 }
 
 ### Join a board
-POST http://localhost:3000/api/boards/join
+POST http://localhost:4000/api/boards/join
 Content-Type: application/json
 
 {
-  "board_id": "03d2ec47-f8c9-42b0-9584-7a78dc800400"
+  "board_id": "dcdc5999-a2dc-462e-bf1c-63d58b535ac9"
 }
 
 ### Get all boards of a user
-GET http://localhost:3000/api/boards
+GET http://localhost:4000/api/boards
 
 ### Create a new list
-POST http://localhost:3000/api/boards/lists
+POST http://localhost:4000/api/boards/lists
 Content-Type: application/json
 
 {
-  "title": "Projects3",
-  "board_id": "66f398d8-b7bc-495e-a620-97d72cf67b58"
+  "title": "Projects",
+  "board_id": "dcdc5999-a2dc-462e-bf1c-63d58b535ac9"
 }

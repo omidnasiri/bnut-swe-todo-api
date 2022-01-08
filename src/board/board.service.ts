@@ -10,7 +10,7 @@ import { Board } from './models/board.entity';
 import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserBoard } from './models/user-board.entity';
-import { GetBoardDto } from './dtos/response-dtos/get-board.dto';
+import { BoardDto } from './dtos/response-dtos/board.dto';
 import { JoinBoardDto } from './dtos/request-dtos/join-board.dto';
 import { CreateListDto } from './dtos/request-dtos/create-list.dto';
 import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
@@ -26,6 +26,12 @@ export class BoardService {
   async createList(createListDto: CreateListDto, user: User) {
     const board = await this.findBoard(createListDto.board_id);
     if (!board) throw new NotFoundException('board not found');
+
+    let boards = await this.findByUser(user);
+    console.log(boards.filter(b => b.board_id == board.board_id));
+    
+    if (!boards.some(b => b.board_id == board.board_id))
+      throw new ForbiddenException();
 
     const list = this.listRepo.create(createListDto);
     list.creator = Promise.resolve(user);
@@ -46,6 +52,10 @@ export class BoardService {
     if ((await board.creator).user_id === user.user_id)
       throw new ForbiddenException('user is creator');
 
+    if (board.is_private) {
+      throw new ForbiddenException('board is private');
+    }
+
     const userBoards = await this.userBoardRepo.find({
       where: { user_id: user.user_id, board_id: board.board_id }
     });
@@ -56,7 +66,7 @@ export class BoardService {
     return this.userBoardRepo.save(userBoard);
   }
 
-  async findByUser(user: User): Promise<GetBoardDto[]> {
+  async findByUser(user: User): Promise<BoardDto[]> {
     const userId = user.user_id;
     const createdBoards = await this.boardRepo.find({ where: { creator: user } });
 
@@ -65,13 +75,29 @@ export class BoardService {
       .where('userBoard.user_id = :userId', { userId })
       .getMany();
 
-    const boards = [
-      ...createdBoards.map((item): GetBoardDto => {
-        return { board_id: item.board_id, title: item.title };
-      }),
-      ...joinedBoards.map((item): GetBoardDto => {
-        return { board_id: item.board_id, title: item.title };
+    const mappedJoinedBoards = await Promise.all(
+      joinedBoards.map(async (item): Promise<BoardDto> => {
+        return {
+          title: item.title,
+          creator_user_id: (await item.creator).user_id,
+          board_id: item.board_id,
+          is_private: item.is_private,
+          create_date_time: item.create_date_time
+        };
       })
+    );
+
+    const boards = [
+      ...createdBoards.map((item): BoardDto => {
+        return {
+          title: item.title,
+          creator_user_id: userId,
+          board_id: item.board_id,
+          is_private: item.is_private,
+          create_date_time: item.create_date_time
+        };
+      }),
+      ...mappedJoinedBoards
     ]
     return boards;
   }

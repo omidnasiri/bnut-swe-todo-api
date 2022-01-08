@@ -27,6 +27,10 @@ export class CardService {
     const list = await this.boardService.findList(createCardDto.list_id);
     if (!list) throw new NotFoundException('list not found');
 
+    let boards = await this.boardService.findByUser(user);
+    if (!boards.some(async b => b.board_id == (await list.board).board_id))
+      throw new ForbiddenException();
+
     const card = this.cardRepo.create(createCardDto);
     card.creator = Promise.resolve(user);
     card.list = Promise.resolve(list);
@@ -48,11 +52,11 @@ export class CardService {
     const currentBoardId = (await (await card.list).board).board_id;
 
     let boards = await this.boardService.findByUser(user);
-    if (!boards.filter(b => b.board_id == currentBoardId))
-      throw new ForbiddenException('unauthorized');
+    if (!boards.some(b => b.board_id == currentBoardId))
+      throw new ForbiddenException();
 
     boards = await this.boardService.findByUser(assignedUser);
-    if (!boards.filter(b => b.board_id == currentBoardId))
+    if (!boards.some(b => b.board_id == currentBoardId))
       throw new BadRequestException('user not in board');
 
     const userCard = this.userCardRepo.create(assignCardDto);

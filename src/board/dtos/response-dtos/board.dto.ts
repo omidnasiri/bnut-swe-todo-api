@@ -10,6 +10,9 @@ export class BoardDto {
   @Expose()
   title: string;
 
+  @Expose()
+  is_private: boolean;
+
   @Transform(({ obj }) => obj.creator.user_id )
   @Expose()
   creator_user_id: string;

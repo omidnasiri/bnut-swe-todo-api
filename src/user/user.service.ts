@@ -92,6 +92,9 @@ export class UserService {
       if (!check) throw new BadRequestException('unacceptable status');
       friend.status = addFriendDto.status;
     } else {
+      if (addFriendDto.status !== FriendStatus.Requseted)
+        throw new BadRequestException('unacceptable status');
+
       friend = this.firendRepo.create();
       friend.alpha = Promise.resolve(user);
       friend.beta = Promise.resolve(beta);

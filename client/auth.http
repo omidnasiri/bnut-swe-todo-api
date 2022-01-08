@@ -1,26 +1,26 @@
 ### Create a new user
-POST http://localhost:3000/api/auth/signup
+POST http://localhost:4000/api/auth/signup
 Content-Type: application/json
 
 {
-  "firstname": "123",
-  "lastname": "456",
-  "email": "123@123.com",
+  "firstname": "hamid",
+  "lastname": "bahmanyar",
+  "email": "hamid@gmail.com",
   "password": "asdf",
   "password_confirm": "asdf"
 }
 
 ### Sign in as an existing user
-POST http://localhost:3000/api/auth/signin
+POST http://localhost:4000/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "asdf@asdf.com",
+  "email": "ali@gmail.com",
   "password": "asdf"
 }
 
 ### Get the currently signed is user
-GET http://localhost:3000/api/auth/whoami
+GET http://localhost:4000/api/auth/whoami
 
 ### Sign out
-POST http://localhost:3000/api/auth/signout
+POST http://localhost:4000/api/auth/signout

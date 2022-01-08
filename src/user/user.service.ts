@@ -52,6 +52,12 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
+  async findByEmail(email: string) {
+    const user = await this.userRepo.findOne({ where: { email: email } });
+    if (!user) throw new NotFoundException('user not found');
+    return user;
+  }
+
   async friend(addFriendDto: AddFriendDto, user: User) {
     if (addFriendDto.user_id === user.user_id) throw new ForbiddenException();
 

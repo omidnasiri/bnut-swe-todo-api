@@ -3,6 +3,7 @@ import {
   Body,
   Post,
   Patch,
+  Query,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -25,6 +26,13 @@ export class UserController {
   @Serialize(UserDto)
   updateUser(@currentUser() user: User, @Body() body: UpdateUserDto) {
     return this.userService.updateUser(body, user);
+  }
+
+  @Get()
+  @UseGuards(AuthGuard)
+  @Serialize(UserDto)
+  findUser(@Query('email') email: string) {
+    return this.userService.findByEmail(email);
   }
 
   @Post('/firends')

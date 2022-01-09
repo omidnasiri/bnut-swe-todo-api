@@ -9,6 +9,8 @@ import { promisify } from "util";
 import { Repository } from 'typeorm';
 import { User } from './models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SignInDto } from 'src/auth/dtos/signin-dto';
+import { SignUpDto } from 'src/auth/dtos/signup-dto';
 import { randomBytes, scrypt as _scrypt } from "crypto";
 import { FriendStatus, Firend } from './models/friend.entity';
 import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
@@ -23,24 +25,32 @@ export class UserService {
     @InjectRepository(User) private userRepo: Repository<User>
     ) { }
 
-  async register(firstname: string, lastname: string, email: string, password: string) {
-    const users = await this.userRepo.find({ email });
+  async register(dto: SignUpDto) {
+    if (dto.password !== dto.password_confirm)
+      throw new BadRequestException('passwords do not match');
+
+    const users = await this.userRepo.find({ email: dto.email });
     if (users.length) throw new BadRequestException('email in use');
 
     const salt = randomBytes(8).toString('hex');
-    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hash = (await scrypt(dto.password, salt, 32)) as Buffer;
     const result = salt + '.' + hash.toString('hex');
 
-    const user = this.userRepo.create({ firstname, lastname, email, password: result });
+    const user = this.userRepo.create({
+      firstname: dto.firstname,
+      lastname: dto.lastname,
+      email: dto.email,
+      password: result
+    });
     return this.userRepo.save(user);
   }
 
-  async login(email: string, password: string) {
-    const [user] = await this.userRepo.find({ email });
+  async login(dto: SignInDto) {
+    const [user] = await this.userRepo.find({ email: dto.email });
     if (!user) throw new NotFoundException('user not found');
 
     const [salt, storedHash] = user.password.split('.');
-    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hash = (await scrypt(dto.password, salt, 32)) as Buffer;
 
     if (storedHash != hash.toString('hex')) throw new BadRequestException('bad password');
     return user;
@@ -53,7 +63,7 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepo.findOne({ where: { email: email } });
+    const user = await this.userRepo.findOne({ email });
     if (!user) throw new NotFoundException('user not found');
     return user;
   }
@@ -101,10 +111,11 @@ export class UserService {
       if (addFriendDto.status !== FriendStatus.Requseted)
         throw new BadRequestException('unacceptable status');
 
-      friend = this.firendRepo.create();
-      friend.alpha = Promise.resolve(user);
-      friend.beta = Promise.resolve(beta);
-      friend.status = FriendStatus.Requseted;
+      friend = this.firendRepo.create({
+        alpha: Promise.resolve(user),
+        beta: Promise.resolve(beta),
+        status: FriendStatus.Requseted
+      });
     }
     
     return this.firendRepo.save(friend);

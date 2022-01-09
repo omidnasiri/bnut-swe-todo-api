@@ -23,22 +23,26 @@ export class BoardService {
     @InjectRepository(UserBoard) private userBoardRepo: Repository<UserBoard>
     ) { }
 
-  async createList(createListDto: CreateListDto, user: User) {
-    const board = await this.findBoard(createListDto.board_id);
+  async createList(dto: CreateListDto, user: User) {
+    const board = await this.findBoard(dto.board_id);
     if (!board) throw new NotFoundException('board not found');
 
     if (!await this.memberCheck(user, board.board_id))
       throw new ForbiddenException();
 
-    const list = this.listRepo.create(createListDto);
-    list.creator = Promise.resolve(user);
-    list.board = Promise.resolve(board);
+    const list = this.listRepo.create({
+      ...dto,
+      creator: Promise.resolve(user),
+      board: Promise.resolve(board)
+    });
     return this.listRepo.save(list);
   }
 
-  createBoard(createBoardDto: CreateBoardDto, user: User) {
-    const board = this.boardRepo.create(createBoardDto);
-    board.creator = Promise.resolve(user);
+  createBoard(dto: CreateBoardDto, user: User) {
+    const board = this.boardRepo.create({
+      ...dto,
+      creator: Promise.resolve(user)
+    });
     return this.boardRepo.save(board);
   }
 
@@ -48,7 +52,7 @@ export class BoardService {
 
     if (!await this.memberCheck(user, id)) throw new ForbiddenException();
 
-    const userBoards = await this.userBoardRepo.find({ where: { board_id: board.board_id } });
+    const userBoards = await this.userBoardRepo.find({ board_id: board.board_id });
     const members = await Promise.all(
       userBoards.map(async (userBoard) => {
         return await userBoard.user;
@@ -58,8 +62,20 @@ export class BoardService {
     return { board, members };
   }
 
-  async join(joinBoardDto: JoinBoardDto, user: User) {
-    const board = await this.findBoard(joinBoardDto.board_id);
+  async updateBoard(id: string, dto: CreateBoardDto, user: User) {
+    const board = await this.boardRepo.findOne(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, id))
+      throw new ForbiddenException();
+
+    board.title = dto.title;
+    board.is_private = dto.is_private;
+    return this.boardRepo.save(board);
+  }
+
+  async join(dto: JoinBoardDto, user: User) {
+    const board = await this.findBoard(dto.board_id);
     if (!board) throw new NotFoundException('board not found');
 
     if ((await board.creator).user_id === user.user_id)
@@ -69,19 +85,19 @@ export class BoardService {
       throw new ForbiddenException('board is private');
     }
 
-    const userBoards = await this.userBoardRepo.find({
-      where: { user_id: user.user_id, board_id: board.board_id }
-    });
+    const userBoards = await this.userBoardRepo.find({ user_id: user.user_id, board_id: board.board_id });
     if (userBoards.length) throw new BadRequestException('already joined');
 
-    const userBoard = this.userBoardRepo.create(joinBoardDto);
-    userBoard.user = Promise.resolve(user);
+    const userBoard = this.userBoardRepo.create({
+      ...dto,
+      user: Promise.resolve(user)
+    });
     return this.userBoardRepo.save(userBoard);
   }
 
   async findByUser(user: User): Promise<BoardDto[]> {
     const userId = user.user_id;
-    const createdBoards = await this.boardRepo.find({ where: { creator: user } });
+    const createdBoards = await this.boardRepo.find({ creator: user });
 
     const joinedBoards = await this.boardRepo.createQueryBuilder('board')
       .innerJoinAndSelect('board.joined_users', 'userBoard')
@@ -116,14 +132,10 @@ export class BoardService {
   }
 
   async memberCheck(user: User, boardId: string): Promise<boolean> {
-    const createdBoard = await this.boardRepo.findOne({
-      where: { creator: user, board_id: boardId }
-    });
+    const createdBoard = await this.boardRepo.findOne({ creator: user, board_id: boardId });
     if (createdBoard) return true;
 
-    const joinedBored = await this.userBoardRepo.findOne({
-      where: { user_id: user.user_id, board_id: boardId }
-    });
+    const joinedBored = await this.userBoardRepo.findOne({ user_id: user.user_id, board_id: boardId });
     if (joinedBored) return true;
 
     return false;

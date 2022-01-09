@@ -15,8 +15,8 @@ import { UserCardDto } from './dtos/response-dtos/user-card.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CreateCardDto } from './dtos/request-dtos/create-card.dto';
 import { AssignCardDto } from './dtos/request-dtos/assign-card.dto';
-import { currentUser } from 'src/auth/decorators/current-user.decorator';
 import { UpdateCardDto } from './dtos/request-dtos/update-card.dto';
+import { currentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('cards')
 export class CardController {
@@ -44,7 +44,7 @@ export class CardController {
 
   @Patch('/:id')
   @UseGuards(AuthGuard)
-  async done(
+  async update(
     @Param('id') id: string,
     @currentUser() user: User,
     @Body() body: UpdateCardDto

@@ -24,10 +24,7 @@ export class AuthController {
 
   @Post('/signup')
   async register(@Body() body: SignUpDto, @Session() Session: any) {
-    if (body.password !== body.password_confirm)
-      throw new BadRequestException('passwords do not match');
-
-    const user = await this.userService.register(body.firstname, body.lastname, body.email, body.password);
+    const user = await this.userService.register(body);
     Session.userId = user.user_id;
     return user;
   }
@@ -35,7 +32,7 @@ export class AuthController {
   @Post('/signin')
   @HttpCode(200)
   async signin(@Body() body: SignInDto, @Session() Session: any) {
-    const user = await this.userService.login(body.email, body.password);
+    const user = await this.userService.login(body);
     Session.userId = user.user_id;
     return user;
   }

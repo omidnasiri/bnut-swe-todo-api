@@ -3,6 +3,7 @@ import {
   Body,
   Post,
   Param,
+  Patch,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -29,13 +30,6 @@ export class BoardController {
     return this.boardService.createBoard(body, user);
   }
 
-  @Post('/join')
-  @UseGuards(AuthGuard)
-  @Serialize(UserBoardDto)
-  async joinBoard(@currentUser() user: User, @Body() body: JoinBoardDto) {
-    return await this.boardService.join(body, user);
-  }
-
   @Get('/:id')
   @UseGuards(AuthGuard)
   async get(@currentUser() user: User, @Param('id') id: string) {
@@ -46,6 +40,23 @@ export class BoardController {
   @UseGuards(AuthGuard)
   async getUserBoards(@currentUser() user: User) {
     return await this.boardService.findByUser(user);
+  }
+
+  @Patch('/:id')
+  @UseGuards(AuthGuard)
+  async updateBoard(
+    @Param('id') id: string,
+    @currentUser() user: User,
+    @Body() body: CreateBoardDto
+    ) {
+    return await this.boardService.updateBoard(id, body, user);
+  }
+
+  @Post('/join')
+  @UseGuards(AuthGuard)
+  @Serialize(UserBoardDto)
+  async joinBoard(@currentUser() user: User, @Body() body: JoinBoardDto) {
+    return await this.boardService.join(body, user);
   }
 
   @Post('/lists')

@@ -7,6 +7,21 @@ Content-Type: application/json
   "is_private": false
 }
 
+### Retrieve a board
+GET http://localhost:4000/api/boards/7feffe2d-4976-4d9d-96fe-c70460995fde
+
+### Get all boards of a user
+GET http://localhost:4000/api/boards
+
+### Update a board
+PATCH http://localhost:4000/api/boards/7feffe2d-4976-4d9d-96fe-c70460995fde
+Content-Type: : application/json
+
+{
+  "title": "Software Engineering",
+  "is_private": true
+}
+
 ### Join a board
 POST http://localhost:4000/api/boards/join
 Content-Type: application/json
@@ -15,14 +30,11 @@ Content-Type: application/json
   "board_id": "dcdc5999-a2dc-462e-bf1c-63d58b535ac9"
 }
 
-### Get all boards of a user
-GET http://localhost:4000/api/boards
-
 ### Create a new list
 POST http://localhost:4000/api/boards/lists
 Content-Type: application/json
 
 {
   "title": "Projects",
-  "board_id": "dcdc5999-a2dc-462e-bf1c-63d58b535ac9"
+  "board_id": "ad8edf17-a954-46f5-a43b-8aca3d2cd255"
 }

@@ -66,7 +66,14 @@ export class CardController {
   @Post('/assign')
   @UseGuards(AuthGuard)
   @Serialize(UserCardDto)
-  async assignCard(@currentUser() user: User, @Body() body: AssignCardDto) {
+  async assign(@currentUser() user: User, @Body() body: AssignCardDto) {
     return this.cardService.assign(body, user);
+  }
+
+  @Post('/unassign')
+  @UseGuards(AuthGuard)
+  @HttpCode(204)
+  async unassign(@currentUser() user: User, @Body() body: AssignCardDto) {
+    return this.cardService.unassign(body, user);
   }
 }

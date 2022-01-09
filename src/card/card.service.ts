@@ -115,4 +115,17 @@ export class CardService {
     const userCard = this.userCardRepo.create(dto);
     return this.userCardRepo.save(userCard);
   }
+
+  async unassign(dto: AssignCardDto, user: User) {
+    const card = await this.cardRepo.findOne(dto.card_id);
+    if (!card) throw new NotFoundException('card not found');
+
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
+      throw new ForbiddenException();
+
+    const userCard = await this.userCardRepo.findOne({ user_id: dto.user_id, card_id: dto.card_id });
+    if (!userCard) throw new NotFoundException('entity not found');
+
+    return this.userCardRepo.remove(userCard);
+  }
 }

@@ -35,3 +35,12 @@ Content-Type: application/json
   "card_id": "39c1ca11-870a-48a5-b5ba-89829d027249",
   "user_id": "6ec3d659-8a84-4463-9c63-63a041ec0b8e"
 }
+
+### Unassign a user from a card
+POST http://localhost:4000/api/cards/unassign
+Content-Type: application/json
+
+{
+  "card_id": "39c1ca11-870a-48a5-b5ba-89829d027249",
+  "user_id": "6ec3d659-8a84-4463-9c63-63a041ec0b8e"
+}

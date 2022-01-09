@@ -26,7 +26,7 @@ export class UserBoard {
   @JoinColumn({ name: "user_id" })
   user: Promise<User>;
 
-  @ManyToOne(() => Board, (board) => board.joined_users, { primary: true })
+  @ManyToOne(() => Board, (board) => board.joined_users, { primary: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "board_id" })
   board: Promise<Board>;
 }

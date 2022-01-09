@@ -34,11 +34,9 @@ export class CardService {
     if (!await this.boardService.memberCheck(user, (await list.board).board_id))
       throw new ForbiddenException();
 
-    const card = this.cardRepo.create({
-      ...dto,
-      creator: Promise.resolve(user),
-      list: Promise.resolve(list)
-    });
+    const card = this.cardRepo.create(dto);
+    card.creator = Promise.resolve(user);
+    card.list = Promise.resolve(list);
     return this.cardRepo.save(card);
   }
 

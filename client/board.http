@@ -22,8 +22,11 @@ Content-Type: : application/json
   "is_private": true
 }
 
+### Delete a board
+DELETE http://localhost:4000/api/boards/8a97b8d0-1350-40f5-8bf3-d37aa744e635
+
 ### Join a board
-POST http://localhost:4000/api/boards/join/dcdc5999-a2dc-462e-bf1c-63d58b535ac9
+POST http://localhost:4000/api/boards/join/8a97b8d0-1350-40f5-8bf3-d37aa744e635
 
 ### leave a board
 DELETE http://localhost:4000/api/boards/join/dcdc5999-a2dc-462e-bf1c-63d58b535ac9
@@ -33,8 +36,8 @@ POST http://localhost:4000/api/boards/lists
 Content-Type: application/json
 
 {
-  "title": "Projects",
-  "board_id": "ad8edf17-a954-46f5-a43b-8aca3d2cd255"
+  "title": "Projects2",
+  "board_id": "8a97b8d0-1350-40f5-8bf3-d37aa744e635"
 }
 
 ### Update a list
@@ -46,4 +49,4 @@ Content-Type: : application/json
 }
 
 ### delete a list
-DELETE http://localhost:4000/api/boards/lists/dcdc5999-a2dc-462e-bf1c-63d58b535ac9
+DELETE http://localhost:4000/api/boards/lists/68fe2adc-86c0-4e92-b0e2-952d5b4f584b

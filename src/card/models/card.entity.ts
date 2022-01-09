@@ -33,7 +33,7 @@ export class Card {
   @JoinColumn({ name: 'creator_user_id' })
   creator: Promise<User>;
 
-  @ManyToOne(() => List, (list) => list.cards)
+  @ManyToOne(() => List, (list) => list.cards, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'list_id' })
   list: Promise<List>;
 

@@ -23,11 +23,9 @@ export class BoardService {
     @InjectRepository(UserBoard) private userBoardRepo: Repository<UserBoard>
     ) { }
 
-  createBoard(dto: CreateBoardDto, user: User) {
-    const board = this.boardRepo.create({
-      ...dto,
-      creator: Promise.resolve(user)
-    });
+  async createBoard(dto: CreateBoardDto, user: User) {
+    const board = this.boardRepo.create(dto);
+    board.creator = Promise.resolve(user);
     return this.boardRepo.save(board);
   }
 
@@ -95,6 +93,15 @@ export class BoardService {
     return this.boardRepo.save(board);
   }
 
+  async deleteBoard(id: string, user: User) {
+    const board = await this.boardRepo.findOne(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if ((await board.creator).user_id !== user.user_id) throw new ForbiddenException();
+
+    return this.boardRepo.remove(board);
+  }
+
   async join(id: string, user: User) {
     const board = await this.findBoard(id);
     if (!board) throw new NotFoundException('board not found');
@@ -109,10 +116,9 @@ export class BoardService {
     const userBoards = await this.userBoardRepo.find({ user_id: user.user_id, board_id: board.board_id });
     if (userBoards.length) throw new BadRequestException('already joined');
 
-    const userBoard = this.userBoardRepo.create({
-      board: Promise.resolve(board),
-      user: Promise.resolve(user)
-    });
+    const userBoard = this.userBoardRepo.create();
+    userBoard.board = Promise.resolve(board);
+    userBoard.user = Promise.resolve(user);
     return this.userBoardRepo.save(userBoard);
   }
 
@@ -134,11 +140,9 @@ export class BoardService {
     if (!await this.memberCheck(user, board.board_id))
       throw new ForbiddenException();
 
-    const list = this.listRepo.create({
-      ...dto,
-      creator: Promise.resolve(user),
-      board: Promise.resolve(board)
-    });
+    const list = this.listRepo.create(dto);
+    list.creator = Promise.resolve(user);
+    list.board = Promise.resolve(board);
     return this.listRepo.save(list);
   }
 

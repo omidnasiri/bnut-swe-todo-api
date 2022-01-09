@@ -27,10 +27,10 @@ export class List {
   @JoinColumn({ name: 'creator_user_id' })
   creator: Promise<User>;
 
-  @ManyToOne(() => Board, (board) => board.lists)
+  @ManyToOne(() => Board, (board) => board.lists, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'board_id' })
   board: Promise<Board>;
 
-  @OneToMany(() => Card, (card) => card.list)
+  @OneToMany(() => Card, (card) => card.list, { cascade: true })
   cards: Promise<Card[]>;
 }

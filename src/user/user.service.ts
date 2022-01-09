@@ -111,11 +111,9 @@ export class UserService {
       if (addFriendDto.status !== FriendStatus.Requseted)
         throw new BadRequestException('unacceptable status');
 
-      friend = this.firendRepo.create({
-        alpha: Promise.resolve(user),
-        beta: Promise.resolve(beta),
-        status: FriendStatus.Requseted
-      });
+      friend = this.firendRepo.create({ status: FriendStatus.Requseted });
+      friend.alpha = Promise.resolve(user);
+      friend.beta = Promise.resolve(beta);
     }
     
     return this.firendRepo.save(friend);

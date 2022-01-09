@@ -31,9 +31,9 @@ export class Board {
   @JoinColumn({ name: 'creator_user_id' })
   creator: Promise<User>;
 
-  @OneToMany(() => List, (list) => list.board)
+  @OneToMany(() => List, (list) => list.board, { cascade: true })
   lists: Promise<List[]>;
 
-  @OneToMany(() => UserBoard, (userBoard) => userBoard.board)
+  @OneToMany(() => UserBoard, (userBoard) => userBoard.board, { cascade: true })
   joined_users: Promise<UserBoard[]>;
 }

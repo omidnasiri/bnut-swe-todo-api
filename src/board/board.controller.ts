@@ -55,6 +55,13 @@ export class BoardController {
     return await this.boardService.updateBoard(id, body, user);
   }
 
+  @Delete('/:id')
+  @UseGuards(AuthGuard)
+  @HttpCode(204)
+  async deleteBoard(@currentUser() user: User, @Param('id') id: string) {
+    await this.boardService.deleteBoard(id, user);
+  }
+
   @Post('/join/:id')
   @UseGuards(AuthGuard)
   @Serialize(UserBoardDto)

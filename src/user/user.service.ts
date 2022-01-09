@@ -15,6 +15,7 @@ import { randomBytes, scrypt as _scrypt } from "crypto";
 import { FriendStatus, Firend } from './models/friend.entity';
 import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
 import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
+import { ChangePasswordDto } from './dtos/request-dtos/change-password.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -34,13 +35,13 @@ export class UserService {
 
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(dto.password, salt, 32)) as Buffer;
-    const result = salt + '.' + hash.toString('hex');
+    const hashedPassword = salt + '.' + hash.toString('hex');
 
     const user = this.userRepo.create({
       firstname: dto.firstname,
       lastname: dto.lastname,
       email: dto.email,
-      password: result
+      password: hashedPassword
     });
     return this.userRepo.save(user);
   }
@@ -52,13 +53,29 @@ export class UserService {
     const [salt, storedHash] = user.password.split('.');
     const hash = (await scrypt(dto.password, salt, 32)) as Buffer;
 
-    if (storedHash != hash.toString('hex')) throw new BadRequestException('bad password');
+    if (storedHash != hash.toString('hex')) throw new BadRequestException('wrong password');
     return user;
   }
 
-  async updateUser(updateUserDto: UpdateUserDto, user: User) {
-    user.firstname = updateUserDto.firstname;
-    user.lastname = updateUserDto.lastname;
+  async updateName(dto: UpdateUserDto, user: User) {
+    user.firstname = dto.firstname;
+    user.lastname = dto.lastname;
+    return this.userRepo.save(user);
+  }
+
+  async changePassword(dto: ChangePasswordDto, user: User) {
+    if (dto.new_password !== dto.new_password_confirm)
+      throw new BadRequestException('passwords do not match');
+
+    const [salt, storedHash] = user.password.split('.');
+    const hash = (await scrypt(dto.current_password, salt, 32)) as Buffer;
+    if (storedHash != hash.toString('hex')) throw new BadRequestException('wrong password');
+
+    const newSalt = randomBytes(8).toString('hex');
+    const newHash = (await scrypt(dto.new_password, salt, 32)) as Buffer;
+    const hashedPassword = salt + '.' + hash.toString('hex');
+
+    user.password = hashedPassword;
     return this.userRepo.save(user);
   }
 
@@ -68,10 +85,10 @@ export class UserService {
     return user;
   }
 
-  async friend(addFriendDto: AddFriendDto, user: User) {
-    if (addFriendDto.user_id === user.user_id) throw new ForbiddenException();
+  async friend(dto: AddFriendDto, user: User) {
+    if (dto.user_id === user.user_id) throw new ForbiddenException();
 
-    const beta = await this.findOne(addFriendDto.user_id);
+    const beta = await this.findOne(dto.user_id);
     if (!beta) throw new NotFoundException('user not found');
 
     const existing = await this.firendRepo.find({
@@ -84,7 +101,7 @@ export class UserService {
     if (existing.length > 1)
       throw new InternalServerErrorException();
 
-    if (existing.length && existing.some(e => e.status === addFriendDto.status))
+    if (existing.length && existing.some(e => e.status === dto.status))
       throw new BadRequestException('already exists');
 
     let friend: Firend;
@@ -93,22 +110,22 @@ export class UserService {
       friend = existing[0];
       let check = false;
 
-      if (friend.status === FriendStatus.Neutal && addFriendDto.status === FriendStatus.Requseted) check = true;
-      if (friend.status === FriendStatus.Neutal && addFriendDto.status === FriendStatus.Blocked) check = true;
+      if (friend.status === FriendStatus.Neutal && dto.status === FriendStatus.Requseted) check = true;
+      if (friend.status === FriendStatus.Neutal && dto.status === FriendStatus.Blocked) check = true;
 
-      if (friend.status === FriendStatus.Requseted && addFriendDto.status === FriendStatus.Friend) check = true;
-      if (friend.status === FriendStatus.Requseted && addFriendDto.status === FriendStatus.Blocked) check = true;
-      if (friend.status === FriendStatus.Requseted && addFriendDto.status === FriendStatus.Neutal) check = true;
+      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Friend) check = true;
+      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Blocked) check = true;
+      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Neutal) check = true;
 
-      if (friend.status === FriendStatus.Friend && addFriendDto.status === FriendStatus.Neutal) check = true;
-      if (friend.status === FriendStatus.Friend && addFriendDto.status === FriendStatus.Blocked) check = true;
+      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Neutal) check = true;
+      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Blocked) check = true;
 
-      if (friend.status === FriendStatus.Blocked && addFriendDto.status === FriendStatus.Neutal) check = true;
+      if (friend.status === FriendStatus.Blocked && dto.status === FriendStatus.Neutal) check = true;
 
       if (!check) throw new BadRequestException('unacceptable status');
-      friend.status = addFriendDto.status;
+      friend.status = dto.status;
     } else {
-      if (addFriendDto.status !== FriendStatus.Requseted)
+      if (dto.status !== FriendStatus.Requseted)
         throw new BadRequestException('unacceptable status');
 
       friend = this.firendRepo.create({ status: FriendStatus.Requseted });

@@ -4,6 +4,7 @@ import {
   Post,
   Patch,
   Query,
+  Session,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
 import { currentUser } from 'src/auth/decorators/current-user.decorator';
+import { ChangePasswordDto } from './dtos/request-dtos/change-password.dto';
 
 @Controller('users')
 export class UserController {
@@ -24,8 +26,21 @@ export class UserController {
   @Patch()
   @UseGuards(AuthGuard)
   @Serialize(UserDto)
-  updateUser(@currentUser() user: User, @Body() body: UpdateUserDto) {
-    return this.userService.updateUser(body, user);
+  updateName(@currentUser() user: User, @Body() body: UpdateUserDto) {
+    return this.userService.updateName(body, user);
+  }
+
+  @Patch('/changePassword')
+  @UseGuards(AuthGuard)
+  @Serialize(UserDto)
+  async changePassword(
+    @Session() Session: any,
+    @currentUser() user: User,
+    @Body() body: ChangePasswordDto
+    ) {
+    const res = await this.userService.changePassword(body, user);
+    Session.userId = null;
+    return res;
   }
 
   @Get()

@@ -7,6 +7,16 @@ Content-Type: application/json
   "lastname": "naemi"
 }
 
+### Change password
+PATCH  http://localhost:4000/api/users/changePassword
+Content-Type: application/json
+
+{
+  "current_password": "omid",
+  "new_password": "asdf",
+  "new_password_confirm": "asdf"
+}
+
 ### Find a user with email
 GET http://localhost:4000/api/users?email=omid@gmail.com
 

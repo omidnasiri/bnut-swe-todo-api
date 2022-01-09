@@ -26,7 +26,7 @@ export class UserCard {
   @JoinColumn({ name: "user_id" })
   user: Promise<User>;
 
-  @ManyToOne(() => Card, (card) => card.assigned_users, { primary: true })
+  @ManyToOne(() => Card, (card) => card.assigned_users, { primary: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "card_id" })
   card: Promise<Card>;
 }

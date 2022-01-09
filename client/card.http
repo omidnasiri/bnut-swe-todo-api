@@ -8,15 +8,6 @@ Content-Type: application/json
   "due_date_time": "Wed, 21 Oct 2022 18:27:50 GMT"
 }
 
-### Assign a card to a user
-POST http://localhost:4000/api/cards/assign
-Content-Type: application/json
-
-{
-  "card_id": "39c1ca11-870a-48a5-b5ba-89829d027249",
-  "user_id": "6ec3d659-8a84-4463-9c63-63a041ec0b8e"
-}
-
 ### Update a card
 PATCH http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
 Content-Type: : application/json
@@ -25,4 +16,16 @@ Content-Type: : application/json
   "title": "Software Engineering",
   "is_done": true,
   "due_date_time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}
+
+### Delete a card
+DELETE http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
+
+### Assign a card to a user
+POST http://localhost:4000/api/cards/assign
+Content-Type: application/json
+
+{
+  "card_id": "39c1ca11-870a-48a5-b5ba-89829d027249",
+  "user_id": "6ec3d659-8a84-4463-9c63-63a041ec0b8e"
 }

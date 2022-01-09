@@ -4,6 +4,8 @@ import {
   Post,
   Param,
   Patch,
+  Delete,
+  HttpCode,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -29,13 +31,6 @@ export class CardController {
     return this.cardService.create(body, user);
   }
 
-  @Post('/assign')
-  @UseGuards(AuthGuard)
-  @Serialize(UserCardDto)
-  async assignCard(@currentUser() user: User, @Body() body: AssignCardDto) {
-    return this.cardService.assign(body, user);
-  }
-
   @Get()
   @UseGuards(AuthGuard)
   async getBoardCards(@currentUser() user: User) {
@@ -51,5 +46,19 @@ export class CardController {
     @Body() body: UpdateCardDto
     ) {
     return await this.cardService.update(id, body, user);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard)
+  @HttpCode(204)
+  async deleteList(@currentUser() user: User, @Param('id') id: string) {
+    await this.cardService.delete(id, user);
+  }
+
+  @Post('/assign')
+  @UseGuards(AuthGuard)
+  @Serialize(UserCardDto)
+  async assignCard(@currentUser() user: User, @Body() body: AssignCardDto) {
+    return this.cardService.assign(body, user);
   }
 }

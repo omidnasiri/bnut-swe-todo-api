@@ -37,6 +37,6 @@ export class Card {
   @JoinColumn({ name: 'list_id' })
   list: Promise<List>;
 
-  @OneToMany(() => UserCard, (userCard) => userCard.card)
+  @OneToMany(() => UserCard, (userCard) => userCard.card, { cascade: true })
   assigned_users: Promise<UserCard[]>;
 }

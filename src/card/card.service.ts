@@ -40,6 +40,35 @@ export class CardService {
     return this.cardRepo.save(card);
   }
 
+  async update(id: string, dto: UpdateCardDto, user: User) {
+    const card = await this.cardRepo.findOne(id);
+    if (!card) throw new NotFoundException('card not found');
+
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
+      throw new ForbiddenException();
+
+    if (dto.due_date_time) {
+      if (dto.due_date_time.getTime() <= card.create_date_time.getTime())
+        throw new BadRequestException('unaccepatable due date');
+
+      card.due_date_time = dto.due_date_time;
+    }
+
+    card.title = dto.title;
+    card.is_done = dto.is_done;
+    return this.cardRepo.save(card);
+  }
+
+  async delete(id: string, user: User) {
+    const card = await this.cardRepo.findOne(id);
+    if (!card) throw new NotFoundException('card not found');
+
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
+      throw new ForbiddenException();
+
+    return this.cardRepo.remove(card);
+  }
+
   async assign(dto: AssignCardDto, user: User) {
     const card = await this.cardRepo.findOne(dto.card_id);
     if (!card) throw new NotFoundException('card not found');
@@ -61,23 +90,4 @@ export class CardService {
   }
 
   async findByBoard() {}
-
-  async update(id: string, dto: UpdateCardDto, user: User) {
-    const card = await this.cardRepo.findOne(id);
-    if (!card) throw new NotFoundException('card not found');
-
-    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
-      throw new ForbiddenException();
-
-    if (dto.due_date_time) {
-      if (dto.due_date_time.getTime() <= card.create_date_time.getTime())
-        throw new BadRequestException('unaccepatable due date');
-
-      card.due_date_time = dto.due_date_time;
-    }
-
-    card.title = dto.title;
-    card.is_done = dto.is_done;
-    return this.cardRepo.save(card);
-  }
 }

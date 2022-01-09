@@ -38,3 +38,11 @@ Content-Type: application/json
   "title": "Projects",
   "board_id": "ad8edf17-a954-46f5-a43b-8aca3d2cd255"
 }
+
+### Update a list
+PATCH http://localhost:4000/api/boards/lists/7feffe2d-4976-4d9d-96fe-c70460995fde
+Content-Type: : application/json
+
+{
+  "title": "Projects"
+}

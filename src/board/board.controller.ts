@@ -16,6 +16,7 @@ import { JoinBoardDto } from './dtos/request-dtos/join-board.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserBoardDto } from './dtos/response-dtos/user-board.dto';
 import { CreateListDto } from './dtos/request-dtos/create-list.dto';
+import { UpdateListDto } from './dtos/request-dtos/update-list.dto';
 import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
 import { currentUser } from 'src/auth/decorators/current-user.decorator';
 
@@ -44,6 +45,7 @@ export class BoardController {
 
   @Patch('/:id')
   @UseGuards(AuthGuard)
+  @Serialize(BoardDto)
   async updateBoard(
     @Param('id') id: string,
     @currentUser() user: User,
@@ -64,5 +66,16 @@ export class BoardController {
   @Serialize(ListDto)
   async createList(@currentUser() user: User, @Body() body: CreateListDto) {
     return this.boardService.createList(body, user);
+  }
+
+  @Patch('/lists/:id')
+  @UseGuards(AuthGuard)
+  @Serialize(ListDto)
+  async updateList(
+    @Param('id') id: string,
+    @currentUser() user: User,
+    @Body() body: UpdateListDto
+    ) {
+    return await this.boardService.updateList(id, body, user);
   }
 }

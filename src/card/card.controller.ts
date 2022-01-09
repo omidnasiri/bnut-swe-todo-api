@@ -44,6 +44,7 @@ export class CardController {
 
   @Patch('/:id')
   @UseGuards(AuthGuard)
+  @Serialize(CardDto)
   async update(
     @Param('id') id: string,
     @currentUser() user: User,

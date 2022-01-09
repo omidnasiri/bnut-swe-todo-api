@@ -13,6 +13,7 @@ import { UserBoard } from './models/user-board.entity';
 import { BoardDto } from './dtos/response-dtos/board.dto';
 import { JoinBoardDto } from './dtos/request-dtos/join-board.dto';
 import { CreateListDto } from './dtos/request-dtos/create-list.dto';
+import { UpdateListDto } from './dtos/request-dtos/update-list.dto';
 import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
 
 @Injectable()
@@ -22,21 +23,6 @@ export class BoardService {
     @InjectRepository(Board) private boardRepo: Repository<Board>,
     @InjectRepository(UserBoard) private userBoardRepo: Repository<UserBoard>
     ) { }
-
-  async createList(dto: CreateListDto, user: User) {
-    const board = await this.findBoard(dto.board_id);
-    if (!board) throw new NotFoundException('board not found');
-
-    if (!await this.memberCheck(user, board.board_id))
-      throw new ForbiddenException();
-
-    const list = this.listRepo.create({
-      ...dto,
-      creator: Promise.resolve(user),
-      board: Promise.resolve(board)
-    });
-    return this.listRepo.save(list);
-  }
 
   createBoard(dto: CreateBoardDto, user: User) {
     const board = this.boardRepo.create({
@@ -60,39 +46,6 @@ export class BoardService {
     );
 
     return { board, members };
-  }
-
-  async updateBoard(id: string, dto: CreateBoardDto, user: User) {
-    const board = await this.boardRepo.findOne(id);
-    if (!board) throw new NotFoundException('board not found');
-
-    if (!await this.memberCheck(user, id))
-      throw new ForbiddenException();
-
-    board.title = dto.title;
-    board.is_private = dto.is_private;
-    return this.boardRepo.save(board);
-  }
-
-  async join(dto: JoinBoardDto, user: User) {
-    const board = await this.findBoard(dto.board_id);
-    if (!board) throw new NotFoundException('board not found');
-
-    if ((await board.creator).user_id === user.user_id)
-      throw new ForbiddenException('user is creator');
-
-    if (board.is_private) {
-      throw new ForbiddenException('board is private');
-    }
-
-    const userBoards = await this.userBoardRepo.find({ user_id: user.user_id, board_id: board.board_id });
-    if (userBoards.length) throw new BadRequestException('already joined');
-
-    const userBoard = this.userBoardRepo.create({
-      ...dto,
-      user: Promise.resolve(user)
-    });
-    return this.userBoardRepo.save(userBoard);
   }
 
   async findByUser(user: User): Promise<BoardDto[]> {
@@ -129,6 +82,65 @@ export class BoardService {
       ...mappedJoinedBoards
     ]
     return boards;
+  }
+
+  async updateBoard(id: string, dto: CreateBoardDto, user: User) {
+    const board = await this.boardRepo.findOne(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, id))
+      throw new ForbiddenException();
+
+    board.title = dto.title;
+    board.is_private = dto.is_private;
+    return this.boardRepo.save(board);
+  }
+
+  async join(dto: JoinBoardDto, user: User) {
+    const board = await this.findBoard(dto.board_id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if ((await board.creator).user_id === user.user_id)
+      throw new ForbiddenException('user is creator');
+
+    if (board.is_private) {
+      throw new ForbiddenException('board is private');
+    }
+
+    const userBoards = await this.userBoardRepo.find({ user_id: user.user_id, board_id: board.board_id });
+    if (userBoards.length) throw new BadRequestException('already joined');
+
+    const userBoard = this.userBoardRepo.create({
+      ...dto,
+      user: Promise.resolve(user)
+    });
+    return this.userBoardRepo.save(userBoard);
+  }
+
+  async createList(dto: CreateListDto, user: User) {
+    const board = await this.findBoard(dto.board_id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, board.board_id))
+      throw new ForbiddenException();
+
+    const list = this.listRepo.create({
+      ...dto,
+      creator: Promise.resolve(user),
+      board: Promise.resolve(board)
+    });
+    return this.listRepo.save(list);
+  }
+
+  async updateList(id: string, dto: UpdateListDto, user: User) {
+    const list = await this.listRepo.findOne(id);
+    if (!list) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, (await list.board).board_id))
+      throw new ForbiddenException();
+
+    list.title = dto.title;
+    return this.listRepo.save(list);
   }
 
   async memberCheck(user: User, boardId: string): Promise<boolean> {

@@ -2,6 +2,7 @@ import {
   Get,
   Body,
   Post,
+  Param,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -33,6 +34,12 @@ export class BoardController {
   @Serialize(UserBoardDto)
   async joinBoard(@currentUser() user: User, @Body() body: JoinBoardDto) {
     return await this.boardService.join(body, user);
+  }
+
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  async get(@currentUser() user: User, @Param('id') id: string) {
+    return await this.boardService.get(id, user);
   }
 
   @Get()

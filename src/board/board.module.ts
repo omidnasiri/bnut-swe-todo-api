@@ -7,7 +7,13 @@ import { BoardController } from './board.controller';
 import { UserBoard } from './models/user-board.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([List, Board, UserBoard])],
+  imports: [
+    TypeOrmModule.forFeature([
+      List,
+      Board,
+      UserBoard
+    ])
+  ],
   controllers: [BoardController],
   providers: [BoardService],
   exports: [BoardService]

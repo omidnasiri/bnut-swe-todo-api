@@ -2,7 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { List } from './models/list.entity';
@@ -40,6 +40,22 @@ export class BoardService {
     const board = this.boardRepo.create(createBoardDto);
     board.creator = Promise.resolve(user);
     return this.boardRepo.save(board);
+  }
+
+  async get(id: string, user: User) {
+    const board = await this.boardRepo.findOne(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, id)) throw new ForbiddenException();
+
+    const userBoards = await this.userBoardRepo.find({ where: { board_id: board.board_id } });
+    const members = await Promise.all(
+      userBoards.map(async (userBoard) => {
+        return await userBoard.user;
+      })
+    );
+
+    return { board, members };
   }
 
   async join(joinBoardDto: JoinBoardDto, user: User) {

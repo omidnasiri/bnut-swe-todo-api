@@ -47,7 +47,24 @@ export class CardService {
     if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
       throw new ForbiddenException();
 
-    return await card.assigned_users;
+    await card.assigned_users;
+    return card;
+  }
+
+  async findByBoard(id: string, user: User) {
+    const board = await this.boardService.findBoard(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if (!await this.boardService.memberCheck(user, board.board_id))
+    throw new ForbiddenException();
+
+    const lists = await this.boardService.findListsByBoard(board);
+    
+    return lists.map(async (list) => {
+      const cards = await this.cardRepo.find({ list });
+      cards.forEach(async (card) => await card.assigned_users);
+      return { list, cards };
+    });
   }
 
   async update(id: string, dto: UpdateCardDto, user: User) {
@@ -98,6 +115,4 @@ export class CardService {
     const userCard = this.userCardRepo.create(dto);
     return this.userCardRepo.save(userCard);
   }
-
-  async findByBoard() {}
 }

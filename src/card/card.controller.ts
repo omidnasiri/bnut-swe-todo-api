@@ -4,6 +4,7 @@ import {
   Post,
   Param,
   Patch,
+  Query,
   Delete,
   HttpCode,
   UseGuards,
@@ -35,13 +36,13 @@ export class CardController {
   @UseGuards(AuthGuard)
   @Serialize(CardDto)
   async get(@currentUser() user: User, @Param('id') id: string) {
-    await this.cardService.get(id, user);
+    return await this.cardService.get(id, user);
   }
 
   @Get()
   @UseGuards(AuthGuard)
-  async getBoardCards(@currentUser() user: User) {
-    return await this.cardService.findByBoard();
+  async getBoardCards(@currentUser() user: User, @Query('board') board_id: string) {
+    return await this.cardService.findByBoard(board_id, user);
   }
 
   @Patch('/:id')

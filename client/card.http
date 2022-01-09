@@ -11,6 +11,9 @@ Content-Type: application/json
 ### Retrieve a card
 GET http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
 
+### Get lists and cards of a board
+GET http://localhost:4000/api/cards?board=92b98fa5-733b-455d-9411-34c90bc3b615
+
 ### Update a card
 PATCH http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
 Content-Type: : application/json

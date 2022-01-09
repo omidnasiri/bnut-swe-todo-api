@@ -177,13 +177,18 @@ export class BoardService {
     return false;
   }
 
-  findBoard(id: string) {
+  findBoard(id: string): Promise<Board> {
     if (!id) return null;
     return this.boardRepo.findOne(id);
   }
 
-  findList(id: string) {
+  findList(id: string): Promise<List> {
     if (!id) return null;
     return this.listRepo.findOne(id);
+  }
+
+  findListsByBoard(board: Board): Promise<List[]> {
+    if (!board) return null;
+    return this.listRepo.find({ board })
   }
 }

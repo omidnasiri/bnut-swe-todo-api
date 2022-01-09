@@ -31,6 +31,13 @@ export class CardController {
     return this.cardService.create(body, user);
   }
 
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  @Serialize(CardDto)
+  async get(@currentUser() user: User, @Param('id') id: string) {
+    await this.cardService.get(id, user);
+  }
+
   @Get()
   @UseGuards(AuthGuard)
   async getBoardCards(@currentUser() user: User) {
@@ -51,7 +58,7 @@ export class CardController {
   @Delete('/:id')
   @UseGuards(AuthGuard)
   @HttpCode(204)
-  async deleteList(@currentUser() user: User, @Param('id') id: string) {
+  async delete(@currentUser() user: User, @Param('id') id: string) {
     await this.cardService.delete(id, user);
   }
 

@@ -2,6 +2,7 @@ import {
   Expose,
   Transform
 } from "class-transformer";
+import { User } from "src/user/models/user.entity";
 
 export class CardDto {
   @Expose()
@@ -26,4 +27,7 @@ export class CardDto {
 
   @Expose()
   due_date_time: Date;
+
+  @Expose()
+  assigned_users: User[];
 }

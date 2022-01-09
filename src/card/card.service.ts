@@ -40,6 +40,16 @@ export class CardService {
     return this.cardRepo.save(card);
   }
 
+  async get(id: string, user: User) {
+    const card = await this.cardRepo.findOne(id);
+    if (!card) throw new NotFoundException('card not found');
+
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
+      throw new ForbiddenException();
+
+    return await card.assigned_users;
+  }
+
   async update(id: string, dto: UpdateCardDto, user: User) {
     const card = await this.cardRepo.findOne(id);
     if (!card) throw new NotFoundException('card not found');

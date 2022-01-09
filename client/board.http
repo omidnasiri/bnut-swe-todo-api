@@ -44,3 +44,6 @@ Content-Type: : application/json
 {
   "title": "Projects"
 }
+
+### delete a list
+DELETE http://localhost:4000/api/boards/lists/dcdc5999-a2dc-462e-bf1c-63d58b535ac9

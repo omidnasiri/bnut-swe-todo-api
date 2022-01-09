@@ -153,6 +153,16 @@ export class BoardService {
     return this.listRepo.save(list);
   }
 
+  async deleteList(id: string, user: User) {
+    const list = await this.listRepo.findOne(id);
+    if (!list) throw new NotFoundException('board not found');
+
+    if (!await this.memberCheck(user, (await list.board).board_id))
+      throw new ForbiddenException();
+
+    return this.listRepo.remove(list);
+  }
+
   async memberCheck(user: User, boardId: string): Promise<boolean> {
     const createdBoard = await this.boardRepo.findOne({ creator: user, board_id: boardId });
     if (createdBoard) return true;

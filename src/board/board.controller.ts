@@ -86,4 +86,11 @@ export class BoardController {
     ) {
     return await this.boardService.updateList(id, body, user);
   }
+
+  @Delete('/lists/:id')
+  @UseGuards(AuthGuard)
+  @HttpCode(204)
+  async deleteList(@currentUser() user: User, @Param('id') id: string) {
+    await this.boardService.deleteList(id, user);
+  }
 }

@@ -1,10 +1,10 @@
 ### Update user info
-PATCH http://localhost:3000/api/users
+PATCH http://localhost:4000/api/users
 Content-Type: application/json
 
 {
-  "firstname": "bkjb",
-  "lastname": "jbig"
+  "firstname": "",
+  "lastname": "naemi"
 }
 
 ### Find a user with email

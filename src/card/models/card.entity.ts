@@ -19,6 +19,9 @@ export class Card {
   @Column()
   title: string;
 
+  @Column({ default: false })
+  is_done: boolean;
+
   @Column()
   @CreateDateColumn()
   create_date_time: Date

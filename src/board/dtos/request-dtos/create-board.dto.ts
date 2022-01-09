@@ -1,7 +1,13 @@
-import { IsBoolean, IsOptional, IsString } from "class-validator";
+import {
+  IsString,
+  IsBoolean,
+  IsOptional,
+  IsNotEmpty
+} from "class-validator";
 
 export class CreateBoardDto {
   @IsString()
+  @IsNotEmpty()
   title: string;
 
   @IsBoolean()

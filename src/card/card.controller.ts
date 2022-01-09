@@ -3,7 +3,9 @@ import {
   Body,
   Post,
   UseGuards,
-  Controller
+  Controller,
+  Patch,
+  Param
 } from '@nestjs/common';
 import { CardService } from './card.service';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -14,6 +16,7 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CreateCardDto } from './dtos/request-dtos/create-card.dto';
 import { AssignCardDto } from './dtos/request-dtos/assign-card.dto';
 import { currentUser } from 'src/auth/decorators/current-user.decorator';
+import { UpdateCardDto } from './dtos/request-dtos/update-card.dto';
 
 @Controller('cards')
 export class CardController {
@@ -35,13 +38,17 @@ export class CardController {
 
   @Get()
   @UseGuards(AuthGuard)
-  async getUserCards(@currentUser() user: User) {
-    return await this.cardService.findByUser();
-  }
-
-  @Get()
-  @UseGuards(AuthGuard)
   async getBoardCards(@currentUser() user: User) {
     return await this.cardService.findByBoard();
+  }
+
+  @Patch('/:id')
+  @UseGuards(AuthGuard)
+  async done(
+    @Param('id') id: string,
+    @currentUser() user: User,
+    @Body() body: UpdateCardDto
+    ) {
+    return await this.cardService.update(id, body, user);
   }
 }

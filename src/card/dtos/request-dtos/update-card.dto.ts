@@ -1,20 +1,19 @@
 import { Type } from "class-transformer";
 import {
-  IsUUID,
   IsDate,
   IsString,
   IsOptional,
-  IsNotEmpty
+  IsNotEmpty,
+  IsBoolean
 } from "class-validator";
 
-export class CreateCardDto {
+export class UpdateCardDto {
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @IsUUID()
-  @IsString()
-  list_id: string;
+  @IsBoolean()
+  is_done: boolean;
 
   @Type(() => Date)
   @IsDate()

@@ -10,6 +10,9 @@ export class CardDto {
   @Expose()
   title: string;
 
+  @Expose()
+  is_done: boolean;
+
   @Transform(({ obj }) => obj.creator.user_id )
   @Expose()
   creator_user_id: string;

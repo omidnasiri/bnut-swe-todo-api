@@ -8,11 +8,22 @@ Content-Type: application/json
   "due_date_time": "Wed, 21 Oct 2015 18:27:50 GMT"
 }
 
-### Assign a card
+### Assign a card to a user
 POST http://localhost:4000/api/cards/assign
 Content-Type: application/json
 
 {
   "card_id": "7feffe2d-4976-4d9d-96fe-c70460995fde",
   "user_id": "ed93b910-5141-41f8-8933-5caea6bc9907"
+}
+
+### Update a card
+
+PATCH http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
+Content-Type: : application/json
+
+{
+  "title": "Software Engineering",
+  "is_done": true,
+  "due_date_time": "Wed, 21 Oct 2015 18:27:50 GMT"
 }

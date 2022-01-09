@@ -13,6 +13,7 @@ import { UserCard } from './models/user-card.entity';
 import { BoardService } from 'src/board/board.service';
 import { CreateCardDto } from './dtos/request-dtos/create-card.dto';
 import { AssignCardDto } from './dtos/request-dtos/assign-card.dto';
+import { UpdateCardDto } from './dtos/request-dtos/update-card.dto';
 
 @Injectable()
 export class CardService {
@@ -24,6 +25,9 @@ export class CardService {
   ) { }
 
   async create(createCardDto: CreateCardDto, user: User) {
+    if (createCardDto.due_date_time && createCardDto.due_date_time.getTime() <= new Date().getTime())
+      throw new BadRequestException('unaccepatable due date');
+
     const list = await this.boardService.findList(createCardDto.list_id);
     if (!list) throw new NotFoundException('list not found');
 
@@ -37,7 +41,7 @@ export class CardService {
   }
 
   async assign(assignCardDto: AssignCardDto, user: User) {
-    const card = await this.findOne(assignCardDto.card_id);
+    const card = await this.cardRepo.findOne(assignCardDto.card_id);
     if (!card) throw new NotFoundException('card not found');
 
     const assignedUser = await this.userService.findOne(assignCardDto.user_id);
@@ -58,12 +62,25 @@ export class CardService {
     return this.userCardRepo.save(userCard);
   }
 
-  async findByUser() {}
-
   async findByBoard() {}
 
-  findOne(id: string) {
-    if (!id) return null;
-    return this.cardRepo.findOne(id);
+  async update(id: string, updateCardDto: UpdateCardDto, user: User) {
+    const card = await this.cardRepo.findOne(id);
+    if (!card) throw new NotFoundException('card not found');
+
+    if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
+    throw new ForbiddenException();
+
+    if (updateCardDto.due_date_time) {
+      if (updateCardDto.due_date_time.getTime() <= card.create_date_time.getTime())
+        throw new BadRequestException('unaccepatable due date');
+
+      card.due_date_time = updateCardDto.due_date_time;
+    }
+
+    card.title = updateCardDto.title;
+    card.is_done = updateCardDto.is_done;
+
+    return this.cardRepo.save(card);
   }
 }

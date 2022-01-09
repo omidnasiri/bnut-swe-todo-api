@@ -11,7 +11,6 @@ import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserBoard } from './models/user-board.entity';
 import { BoardDto } from './dtos/response-dtos/board.dto';
-import { JoinBoardDto } from './dtos/request-dtos/join-board.dto';
 import { CreateListDto } from './dtos/request-dtos/create-list.dto';
 import { UpdateListDto } from './dtos/request-dtos/update-list.dto';
 import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
@@ -96,8 +95,8 @@ export class BoardService {
     return this.boardRepo.save(board);
   }
 
-  async join(dto: JoinBoardDto, user: User) {
-    const board = await this.findBoard(dto.board_id);
+  async join(id: string, user: User) {
+    const board = await this.findBoard(id);
     if (!board) throw new NotFoundException('board not found');
 
     if ((await board.creator).user_id === user.user_id)
@@ -111,10 +110,21 @@ export class BoardService {
     if (userBoards.length) throw new BadRequestException('already joined');
 
     const userBoard = this.userBoardRepo.create({
-      ...dto,
+      board: Promise.resolve(board),
       user: Promise.resolve(user)
     });
     return this.userBoardRepo.save(userBoard);
+  }
+
+  async leave(id: string, user: User) {
+    const board = await this.findBoard(id);
+    if (!board) throw new NotFoundException('board not found');
+
+    if ((await board.creator).user_id === user.user_id)
+      throw new ForbiddenException('user is creator');
+
+    const userBoard = await this.userBoardRepo.findOne({ user_id: user.user_id, board_id: board.board_id });
+    return this.userBoardRepo.remove(userBoard);
   }
 
   async createList(dto: CreateListDto, user: User) {

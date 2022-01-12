@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { Card } from './models/card.entity';
 import { CardService } from './card.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,10 +9,6 @@ import { BoardModule } from 'src/board/board.module';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '5m' }
-    }),
     TypeOrmModule.forFeature([Card, UserCard]),
     BoardModule,
     UserModule

@@ -6,10 +6,7 @@ import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '5m' }
-    }),
+    JwtModule.register({ secret: 'secret' }),
     UserModule
   ],
   controllers: [AuthController]

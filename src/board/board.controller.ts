@@ -10,8 +10,8 @@ import {
   Controller
 } from '@nestjs/common';
 import { BoardService } from './board.service';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { User } from 'src/user/models/user.entity';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ListDto } from './dtos/response-dtos/list.dto';
 import { BoardDto } from './dtos/response-dtos/board.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';

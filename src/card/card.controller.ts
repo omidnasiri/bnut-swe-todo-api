@@ -11,8 +11,8 @@ import {
   Controller
 } from '@nestjs/common';
 import { CardService } from './card.service';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { User } from 'src/user/models/user.entity';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CardDto } from './dtos/response-dtos/card.dto';
 import { UserCardDto } from './dtos/response-dtos/user-card.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';

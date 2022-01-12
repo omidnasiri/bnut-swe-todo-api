@@ -1,16 +1,17 @@
 import {
+  Res,
   Get,
   Post,
   Body,
-  Session,
   HttpCode,
   UseGuards,
-  Controller,
-  BadRequestException
+  Controller
 } from '@nestjs/common';
+import { Response } from 'express';
+import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dtos/signup-dto';
 import { SignInDto } from './dtos/signin-dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { User } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/user.service';
 import { UserDto } from 'src/user/dtos/responst-dtos/user-dto';
@@ -20,20 +21,25 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 @Controller('auth')
 @Serialize(UserDto)
 export class AuthController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService
+  ) { }
 
   @Post('/signup')
-  async register(@Body() body: SignUpDto, @Session() Session: any) {
+  async register(@Body() body: SignUpDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.userService.register(body);
-    Session.userId = user.user_id;
+    const jwt = await this.jwtService.signAsync({ id: user.user_id });
+    res.cookie('jwt', jwt, { httpOnly: true });
     return user;
   }
 
   @Post('/signin')
   @HttpCode(200)
-  async signin(@Body() body: SignInDto, @Session() Session: any) {
+  async signin(@Body() body: SignInDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.userService.login(body);
-    Session.userId = user.user_id;
+    const jwt = await this.jwtService.signAsync({ id: user.user_id });
+    res.cookie('jwt', jwt, { httpOnly: true });
     return user;
   }
 
@@ -46,7 +52,8 @@ export class AuthController {
 
   @Post('/signout')
   @HttpCode(204)
-  signout(@Session() Session: any) {
-    Session.userId = null;
+  signout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('jwt');
   }
 }
+

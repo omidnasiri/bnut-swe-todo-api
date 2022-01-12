@@ -7,6 +7,7 @@ import {
   Injectable,
   NestMiddleware
 } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { User } from '../../user/models/user.entity';
 import { UserService } from "../../user/user.service";
 
@@ -20,13 +21,18 @@ declare global {
 
 @Injectable()
 export class CurrentUserMiddleware implements NestMiddleware {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService
+  ) { }
   
   async use(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.session || {};
+    const jwt = req.cookies['jwt'];
 
-    if (userId) {
-      const user = await this.userService.findOne(userId);
+    if (jwt) {
+      const decodedToken = this.jwtService.decode(jwt);
+      console.log('middleware: ', decodedToken);
+      const user = await this.userService.findOne(decodedToken['id']);
       req.currentUser = user;
     }
 

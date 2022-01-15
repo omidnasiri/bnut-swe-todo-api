@@ -4,7 +4,9 @@ Content-Type: application/json
 
 {
   "title": "Graph Theory",
-  "list_id": "34341b6b-98e8-4618-b9e6-7c4edac0bf85"
+  "list_id": "34341b6b-98e8-4618-b9e6-7c4edac0bf85",
+  "due_date_time": "Wed, 21 Oct 2015 18:27:50 GMT"
+  
 }
 
 ### Retrieve a card

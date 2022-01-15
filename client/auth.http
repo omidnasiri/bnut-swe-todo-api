@@ -15,7 +15,7 @@ POST http://localhost:4000/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "ali@gmail.com",
+  "email": "omid@gmail.com",
   "password": "asdf"
 }
 

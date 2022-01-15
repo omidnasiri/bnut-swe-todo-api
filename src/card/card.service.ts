@@ -91,11 +91,19 @@ export class CardService {
           cards: await Promise.all(
             (await list.cards).map(async (card) => {
               return {
+                creator: await Promise.resolve(card.creator.then((user) => {
+                  return {
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    id: user.user_id
+                  }
+                })),
                 card_id: card.card_id,
                 title: card.title,
                 is_done: card.is_done,
                 create_date_time: card.create_date_time,
                 due_date_time: card.due_date_time,
+                
                 assignedUsers: await Promise.all(
                   (await card.assigned_users).map(async (userCard) => {
                     const user = await userCard.user;

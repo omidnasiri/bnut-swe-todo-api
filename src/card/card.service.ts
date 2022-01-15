@@ -47,8 +47,30 @@ export class CardService {
     if (!await this.boardService.memberCheck(user, (await (await card.list).board).board_id))
       throw new ForbiddenException();
 
-    await card.assigned_users;
-    return card;
+    return {
+      card_id: card.card_id,
+      title: card.title,
+      is_done: card.is_done,
+      create_date_time: card.create_date_time,
+      due_date_time: card.due_date_time,
+      creator: await Promise.resolve(card.creator.then((user) => {
+        return {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          id: user.user_id
+        }
+      })),
+      assignedUsers: await Promise.all(
+        (await card.assigned_users).map(async (userCard) => {
+          const user = await userCard.user;
+          return {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user.user_id
+          }
+        })
+      )
+    }
   }
 
   async findByBoard(id: string, user: User) {
@@ -56,15 +78,40 @@ export class CardService {
     if (!board) throw new NotFoundException('board not found');
 
     if (!await this.boardService.memberCheck(user, board.board_id))
-    throw new ForbiddenException();
+      throw new ForbiddenException();
 
     const lists = await this.boardService.findListsByBoard(board);
-    
-    return lists.map(async (list) => {
-      const cards = await this.cardRepo.find({ list });
-      cards.forEach(async (card) => await card.assigned_users);
-      return { list, cards };
-    });
+
+
+    return await Promise.all(
+      lists.map(async (list) => {
+        return {
+          list_id: list.list_id,
+          title: list.title,
+          cards: await Promise.all(
+            (await list.cards).map(async (card) => {
+              return {
+                card_id: card.card_id,
+                title: card.title,
+                is_done: card.is_done,
+                create_date_time: card.create_date_time,
+                due_date_time: card.due_date_time,
+                assignedUsers: await Promise.all(
+                  (await card.assigned_users).map(async (userCard) => {
+                    const user = await userCard.user;
+                    return {
+                      firstname: user.firstname,
+                      lastname: user.lastname,
+                      id: user.user_id
+                    }
+                  })
+                )
+              }
+            })
+          )
+        }
+      })
+    );
   }
 
   async update(id: string, dto: UpdateCardDto, user: User) {

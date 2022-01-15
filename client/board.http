@@ -32,7 +32,7 @@ Content-Type: : application/json
 DELETE http://localhost:4000/api/boards/8a97b8d0-1350-40f5-8bf3-d37aa744e635
 
 ### Join a board
-POST http://localhost:4000/api/boards/join/4c7e81f9-5a3c-4e4a-bd7a-ab742478120a
+POST http://localhost:4000/api/boards/join/7d78ded1-c2dd-4c32-9521-3ef88346de49
 
 ### leave a board
 DELETE http://localhost:4000/api/boards/join/dcdc5999-a2dc-462e-bf1c-63d58b535ac9
@@ -42,8 +42,8 @@ POST http://localhost:4000/api/boards/lists
 Content-Type: application/json
 
 {
-  "title": "Projects2",
-  "board_id": "8a97b8d0-1350-40f5-8bf3-d37aa744e635"
+  "title": "Homeworkes",
+  "board_id": "7d78ded1-c2dd-4c32-9521-3ef88346de49"
 }
 
 ### Update a list

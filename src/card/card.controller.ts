@@ -34,7 +34,6 @@ export class CardController {
 
   @Get('/:id')
   @UseGuards(AuthGuard)
-  @Serialize(CardDto)
   async get(@currentUser() user: User, @Param('id') id: string) {
     return await this.cardService.get(id, user);
   }

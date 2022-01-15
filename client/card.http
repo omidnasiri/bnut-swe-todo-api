@@ -3,16 +3,15 @@ POST http://localhost:4000/api/cards
 Content-Type: application/json
 
 {
-  "title": "Software Engineering",
-  "list_id": "92b98fa5-733b-455d-9411-34c90bc3b615",
-  "due_date_time": "Wed, 21 Oct 2022 18:27:50 GMT"
+  "title": "Graph Theory",
+  "list_id": "34341b6b-98e8-4618-b9e6-7c4edac0bf85"
 }
 
 ### Retrieve a card
-GET http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
+GET http://localhost:4000/api/cards/d0d003ee-063c-4ca7-9103-74488682686a
 
 ### Get lists and cards of a board
-GET http://localhost:4000/api/cards?board=92b98fa5-733b-455d-9411-34c90bc3b615
+GET http://localhost:4000/api/cards?board=7d78ded1-c2dd-4c32-9521-3ef88346de49
 
 ### Update a card
 PATCH http://localhost:4000/api/cards/7feffe2d-4976-4d9d-96fe-c70460995fde
@@ -32,8 +31,8 @@ POST http://localhost:4000/api/cards/assign
 Content-Type: application/json
 
 {
-  "card_id": "39c1ca11-870a-48a5-b5ba-89829d027249",
-  "user_id": "6ec3d659-8a84-4463-9c63-63a041ec0b8e"
+  "card_id": "d0d003ee-063c-4ca7-9103-74488682686a",
+  "user_id": "250ed542-e613-4f31-81c8-aa018405779e"
 }
 
 ### Unassign a user from a card

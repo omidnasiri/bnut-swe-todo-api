@@ -72,8 +72,8 @@ export class UserService {
     if (storedHash != hash.toString('hex')) throw new BadRequestException('wrong password');
 
     const newSalt = randomBytes(8).toString('hex');
-    const newHash = (await scrypt(dto.new_password, salt, 32)) as Buffer;
-    const hashedPassword = salt + '.' + hash.toString('hex');
+    const newHash = (await scrypt(dto.new_password, newSalt, 32)) as Buffer;
+    const hashedPassword = newSalt + '.' + newHash.toString('hex');
 
     user.password = hashedPassword;
     return this.userRepo.save(user);

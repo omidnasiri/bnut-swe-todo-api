@@ -33,14 +33,8 @@ export class UserController {
   @Patch('/changePassword')
   @UseGuards(AuthGuard)
   @Serialize(UserDto)
-  async changePassword(
-    @Session() Session: any,
-    @currentUser() user: User,
-    @Body() body: ChangePasswordDto
-    ) {
-    const res = await this.userService.changePassword(body, user);
-    Session.userId = null;
-    return res;
+  async changePassword(@currentUser() user: User, @Body() body: ChangePasswordDto) {
+    return await this.userService.changePassword(body, user);
   }
 
   @Get()

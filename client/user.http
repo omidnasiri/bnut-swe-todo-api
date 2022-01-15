@@ -13,8 +13,8 @@ Content-Type: application/json
 
 {
   "current_password": "omid",
-  "new_password": "asdf",
-  "new_password_confirm": "asdf"
+  "new_password": "ytdid",
+  "new_password_confirm": "ytdid"
 }
 
 ### Find a user with email

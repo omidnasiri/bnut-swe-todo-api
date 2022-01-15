@@ -9,8 +9,8 @@ import { List } from './models/list.entity';
 import { Board } from './models/board.entity';
 import { User } from 'src/user/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 import { UserBoard } from './models/user-board.entity';
-import { BoardDto } from './dtos/response-dtos/board.dto';
 import { CreateListDto } from './dtos/request-dtos/create-list.dto';
 import { UpdateListDto } from './dtos/request-dtos/update-list.dto';
 import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
@@ -18,6 +18,7 @@ import { CreateBoardDto } from './dtos/request-dtos/create-board.dto';
 @Injectable()
 export class BoardService {
   constructor(
+    private userService: UserService,
     @InjectRepository(List) private listRepo: Repository<List>,
     @InjectRepository(Board) private boardRepo: Repository<Board>,
     @InjectRepository(UserBoard) private userBoardRepo: Repository<UserBoard>
@@ -86,6 +87,31 @@ export class BoardService {
     );
 
     return boards;
+  }
+
+  async suggested(user: User) {
+    const freindsBoards: [] = await this.boardRepo.query(`
+      SELECT board_id, title, A.beta_user_id AS friend_id FROM boards JOIN (
+      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.alpha_user_id) A
+      ON boards.creator_user_id = A.beta_user_id
+      WHERE A.alpha_user_id = '${user.user_id}' AND boards.is_private = false
+      UNION
+      SELECT board_id, title, A.alpha_user_id AS friend_id FROM boards JOIN (
+      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.beta_user_id) A
+      ON boards.creator_user_id = A.alpha_user_id
+      WHERE A.beta_user_id = '${user.user_id}' AND boards.is_private = false
+    `);  
+
+    const suggestedBoards = await Promise.all(
+      freindsBoards.map(async (board: any) => {
+        const user = await this.userService.findOne(board.friend_id);
+        board.firstname = user.firstname;
+        board.lastname = user.lastname;
+        return board;
+      })
+    );
+    
+    return suggestedBoards;
   }
 
   async updateBoard(id: string, dto: CreateBoardDto, user: User) {

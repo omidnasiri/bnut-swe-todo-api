@@ -22,8 +22,8 @@ const scrypt = promisify(_scrypt);
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(Firend) private firendRepo: Repository<Firend>,
-    @InjectRepository(User) private userRepo: Repository<User>
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Firend) private firendRepo: Repository<Firend>
     ) { }
 
   async register(dto: SignUpDto) {

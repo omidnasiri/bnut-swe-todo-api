@@ -44,6 +44,12 @@ export class BoardController {
     return await this.boardService.findUserJoined(user);
   }
 
+  @Get('/suggested')
+  @UseGuards(AuthGuard)
+  async suggested(@currentUser() user: User) {
+    return await this.boardService.suggested(user);
+  }
+
   @Get('/:id')
   @UseGuards(AuthGuard)
   async get(@currentUser() user: User, @Param('id') id: string) {

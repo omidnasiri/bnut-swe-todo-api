@@ -45,39 +45,46 @@ export class BoardService {
     return { board, members };
   }
 
-  async findByUser(user: User): Promise<BoardDto[]> {
-    const userId = user.user_id;
+  async findUserCreated(user: User) {
     const createdBoards = await this.boardRepo.find({ creator: user });
+
+    const boards = [
+      ...createdBoards.map((item) => {
+        return {
+          title: item.title,
+          board_id: item.board_id,
+          is_private: item.is_private,
+          create_date_time: item.create_date_time
+        };
+      }),
+    ]
+    return boards;
+  }
+
+  async findUserJoined(user: User) {
+    const userId = user.user_id;
 
     const joinedBoards = await this.boardRepo.createQueryBuilder('board')
       .innerJoinAndSelect('board.joined_users', 'userBoard')
       .where('userBoard.user_id = :userId', { userId })
       .getMany();
 
-    const mappedJoinedBoards = await Promise.all(
-      joinedBoards.map(async (item): Promise<BoardDto> => {
+    const boards = await Promise.all(
+      joinedBoards.map(async (item)=> {
+        const creator = await item.creator;
+
         return {
           title: item.title,
-          creator_user_id: (await item.creator).user_id,
           board_id: item.board_id,
           is_private: item.is_private,
+          creator_user_id: creator.user_id,
+          creatpr_lastname: creator.lastname,
+          creator_firstname: creator.firstname,
           create_date_time: item.create_date_time
         };
       })
     );
 
-    const boards = [
-      ...createdBoards.map((item): BoardDto => {
-        return {
-          title: item.title,
-          creator_user_id: userId,
-          board_id: item.board_id,
-          is_private: item.is_private,
-          create_date_time: item.create_date_time
-        };
-      }),
-      ...mappedJoinedBoards
-    ]
     return boards;
   }
 

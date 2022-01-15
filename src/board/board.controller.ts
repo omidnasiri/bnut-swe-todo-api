@@ -32,16 +32,22 @@ export class BoardController {
     return this.boardService.createBoard(body, user);
   }
 
+  @Get('/created')
+  @UseGuards(AuthGuard)
+  async getUserCreatedBoards(@currentUser() user: User) {
+    return await this.boardService.findUserCreated(user);
+  }
+
+  @Get('/joined')
+  @UseGuards(AuthGuard)
+  async getUserJoinedBoards(@currentUser() user: User) {
+    return await this.boardService.findUserJoined(user);
+  }
+
   @Get('/:id')
   @UseGuards(AuthGuard)
   async get(@currentUser() user: User, @Param('id') id: string) {
     return await this.boardService.get(id, user);
-  }
-
-  @Get()
-  @UseGuards(AuthGuard)
-  async getUserBoards(@currentUser() user: User) {
-    return await this.boardService.findByUser(user);
   }
 
   @Patch('/:id')

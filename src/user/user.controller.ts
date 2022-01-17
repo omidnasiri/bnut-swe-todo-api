@@ -4,7 +4,7 @@ import {
   Post,
   Patch,
   Query,
-  Session,
+  Param,
   UseGuards,
   Controller
 } from '@nestjs/common';
@@ -53,15 +53,7 @@ export class UserController {
 
   @Get('/firends')
   @UseGuards(AuthGuard)
-  @Serialize(FriendDto)
   async getFriends(@currentUser() user: User) {
     return await this.userService.getFriends(user);
-  }
-
-  @Get('/firends/requests')
-  @UseGuards(AuthGuard)
-  @Serialize(FriendDto)
-  async getFriendRequests(@currentUser() user: User) {
-    return await this.userService.getFriendRequests(user);
   }
 }

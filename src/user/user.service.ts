@@ -137,21 +137,31 @@ export class UserService {
   }
 
   async getFriends(user: User) {
-    return await this.firendRepo.find({
+    const friends = await this.firendRepo.find({
       where: [
-        { alpha_user_id: user.user_id, status: FriendStatus.Friend },
-        { beta_user_id: user.user_id, status: FriendStatus.Friend }
+        { alpha_user_id: user.user_id },
+        { beta_user_id: user.user_id }
       ]
     });
-  }
-
-  async getFriendRequests(user: User) {
-    return await this.firendRepo.find({
-      where: [
-        { alpha_user_id: user.user_id, status: FriendStatus.Requseted },
-        { beta_user_id: user.user_id, status: FriendStatus.Requseted }
-      ]
+    
+    const friend_ids = friends.map((friend) => {
+      return {
+        friend_id: friend.alpha_user_id == user.user_id ? friend.beta_user_id : friend.alpha_user_id,
+        status: friend.status
+      };
     });
+  
+    return await Promise.all(
+      friend_ids.map(async (friend) => {
+        const user = await this.userRepo.findOne({ user_id: friend.friend_id});
+        return {
+          friends_id: friend.friend_id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          status: friend.status
+        }
+      })
+    );
   }
 
   findOne(id: string) {

@@ -110,7 +110,7 @@ export class BoardService {
       freindsBoards.map(async (board: any) => {
         const joined = joinedBoards.find(e => e.board_id == board.board_id);
         if (!joined) {
-          const user = await this.userService.findOne(board.friend_id);
+          const user = await this.userService.findUser(board.friend_id);
           board.firstname = user.firstname;
           board.lastname = user.lastname;
           return board;

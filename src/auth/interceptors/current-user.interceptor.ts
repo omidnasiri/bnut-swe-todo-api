@@ -20,7 +20,7 @@ export class CurrentUserInterceptor implements NestInterceptor {
 
     if (jwt) {
       const decodedToken = this.jwtService.decode(jwt);
-      const user = await this.userService.findOne(decodedToken['id']);
+      const user = await this.userService.findUser(decodedToken['id']);
       request.currentUser = user;
     }
 

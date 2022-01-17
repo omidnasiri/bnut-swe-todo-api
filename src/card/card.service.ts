@@ -155,7 +155,7 @@ export class CardService {
     const card = await this.cardRepo.findOne(dto.card_id);
     if (!card) throw new NotFoundException('card not found');
 
-    const assignedUser = await this.userService.findOne(dto.user_id);
+    const assignedUser = await this.userService.findUser(dto.user_id);
     if (!assignedUser) throw new NotFoundException('assigned user not found');
 
     const userBoards = await this.userCardRepo.find({ user_id: assignedUser.user_id, card_id: card.card_id });

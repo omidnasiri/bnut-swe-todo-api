@@ -2,8 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  BadRequestException,
-  InternalServerErrorException
+  BadRequestException
 } from '@nestjs/common';
 import { promisify } from "util";
 import { Repository } from 'typeorm';
@@ -12,8 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignInDto } from 'src/auth/dtos/signin-dto';
 import { SignUpDto } from 'src/auth/dtos/signup-dto';
 import { randomBytes, scrypt as _scrypt } from "crypto";
-import { FriendStatus, Firend } from './models/friend.entity';
-import { AddFriendDto } from './dtos/request-dtos/add-friend.dto';
+import { Firend } from './models/friend.entity';
 import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
 import { ChangePasswordDto } from './dtos/request-dtos/change-password.dto';
 
@@ -85,57 +83,59 @@ export class UserService {
     return user;
   }
 
-  async friend(dto: AddFriendDto, user: User) {
-    if (dto.user_id === user.user_id) throw new ForbiddenException();
+  async addFriendRequest(id: string, user: User) {
+    if (id == user.user_id) throw new ForbiddenException();
 
-    const beta = await this.findOne(dto.user_id);
+    const beta = await this.findUser(id);
     if (!beta) throw new NotFoundException('user not found');
 
-    const existing = await this.firendRepo.find({
-      where: [
-        { alpha_user_id: user.user_id, beta_user_id: beta.user_id },
-        { alpha_user_id: beta.user_id, beta_user_id: user.user_id }
-      ]
-    });
+    const existing = await this.findFriend(id, user.user_id);
+    if (existing) throw new BadRequestException();
 
-    if (existing.length > 1)
-      throw new InternalServerErrorException();
+    const friend = this.firendRepo.create();
+    friend.alpha = Promise.resolve(user);
+    friend.beta = Promise.resolve(beta);
 
-    if (existing.length && existing.some(e => e.status === dto.status))
-      throw new BadRequestException('already exists');
-
-    let friend: Firend;
-      
-    if (existing.length) {
-      friend = existing[0];
-      let check = false;
-
-      if (friend.status === FriendStatus.Neutral && dto.status === FriendStatus.Requseted) check = true;
-
-      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Friend) check = true;
-      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Neutral) check = true;
-
-      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Neutral) check = true;
-
-      if (!check) throw new BadRequestException('unacceptable status');
-      friend.status = dto.status;
-    } else {
-      if (dto.status !== FriendStatus.Requseted)
-        throw new BadRequestException('unacceptable status');
-
-      friend = this.firendRepo.create({ status: FriendStatus.Requseted });
-      friend.alpha = Promise.resolve(user);
-      friend.beta = Promise.resolve(beta);
-    }
-    
     return this.firendRepo.save(friend);
+  }
+
+  async acceptFriendRequest(id: string, user: User) {
+    if (id == user.user_id) throw new ForbiddenException();
+
+    const friend = await this.findFriend(id, user.user_id);
+    if (!friend || friend.accepted || friend.beta_user_id != user.user_id)
+      throw new BadRequestException();
+
+    await this.firendRepo.update({
+      alpha_user_id: friend.alpha_user_id,
+      beta_user_id: friend.beta_user_id
+    }, { accepted: true });
+  }
+
+  async rejectFriendRequest(id: string, user: User) {
+    if (id == user.user_id) throw new ForbiddenException();
+
+    const friend = await this.findFriend(id, user.user_id);
+    if (!friend || friend.accepted || friend.beta_user_id != user.user_id)
+      throw new BadRequestException();
+
+    this.firendRepo.remove(friend);
+  }
+
+  async removeFriend(id: string, user: User) {
+    if (id == user.user_id) throw new ForbiddenException();
+
+    const friend = await this.findFriend(id, user.user_id);
+    if (!friend || !friend.accepted) throw new BadRequestException();
+
+    this.firendRepo.remove(friend);
   }
 
   async getFriends(user: User) {
     const friends = await this.firendRepo.find({
       where: [
-        { alpha_user_id: user.user_id, status: FriendStatus.Friend },
-        { beta_user_id: user.user_id, status: FriendStatus.Friend }
+        { alpha_user_id: user.user_id, accepted: true },
+        { beta_user_id: user.user_id, accepted: true }
       ]
     });
   
@@ -153,7 +153,7 @@ export class UserService {
   }
 
   async getFriendRequests(user: User) {
-    const friends = await this.firendRepo.find({ beta_user_id: user.user_id, status: FriendStatus.Requseted });
+    const friends = await this.firendRepo.find({ beta_user_id: user.user_id, accepted: false });
 
     return await Promise.all(
       friends.map(async (friend) => {
@@ -168,8 +168,17 @@ export class UserService {
     );
   }
 
-  findOne(id: string) {
+  findUser(id: string) {
     if (!id) return null;
     return this.userRepo.findOne(id);
+  }
+
+  async findFriend(alpha_user_id: string, beta_user_id: string) {
+    if (!alpha_user_id || !beta_user_id) return null;
+    const first = await this.firendRepo.findOne({ alpha_user_id, beta_user_id });
+    if (first) return first;
+    const second = this.firendRepo.findOne({ alpha_user_id: beta_user_id, beta_user_id: alpha_user_id });
+    if (second) return second;
+    return null;
   }
 }

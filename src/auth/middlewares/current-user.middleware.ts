@@ -31,7 +31,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
 
     if (jwt) {
       const decodedToken = this.jwtService.decode(jwt);
-      const user = await this.userService.findOne(decodedToken['id']);
+      const user = await this.userService.findUser(decodedToken['id']);
       req.currentUser = user;
     }
 

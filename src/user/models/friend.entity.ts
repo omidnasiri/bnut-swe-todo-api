@@ -21,8 +21,8 @@ export class Firend {
   @CreateDateColumn()
   create_date_time: Date;
 
-  @Column()
-  status: FriendStatus;
+  @Column({ default: false })
+  accepted: boolean;
 
   @ManyToOne(() => User, (user) => user.alpha, { primary: true })
   @JoinColumn({ name: "alpha_user_id" })
@@ -31,10 +31,4 @@ export class Firend {
   @ManyToOne(() => User, (user) => user.beta, { primary: true })
   @JoinColumn({ name: "beta_user_id" })
   beta: Promise<User>;
-}
-
-export enum FriendStatus {
-  Neutral,
-  Requseted,
-  Friend
 }

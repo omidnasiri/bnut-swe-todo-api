@@ -20,14 +20,17 @@ Content-Type: application/json
 ### Find a user with email
 GET http://localhost:4000/api/users?email=omid@gmail.com
 
-### Add friendship status
-POST http://localhost:4000/api/users/firends
-Content-Type: application/json
+### Add friend request
+POST http://localhost:4000/api/users/firends/6e666ce4-4cc2-4b25-a2ca-8a4b69c137ca
 
-{
-  "user_id": "c72503dd-d673-4307-9bf0-28aea46ac9e8",
-  "status": 1
-}
+### Accept friend request
+PATCH  http://localhost:4000/api/users/firends/accept/8533cbf3-1cad-4309-b193-bac9a03be7ad
+
+### Reject friend request
+DELETE http://localhost:4000/api/users/firends/reject/c72503dd-d673-4307-9bf0-28aea46ac9e8
+
+### Remove friend
+DELETE http://localhost:4000/api/users/firends/bccf6bdf-1467-4543-9926-96913537ddbb
 
 ### Get all friends
 GET http://localhost:4000/api/users/firends

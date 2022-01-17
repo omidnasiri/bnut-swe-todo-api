@@ -1,5 +1,4 @@
 import { Expose } from "class-transformer";
-import { FriendStatus } from "src/user/models/friend.entity";
 
 export class FriendDto {
   @Expose()
@@ -9,5 +8,5 @@ export class FriendDto {
   beta_user_id: string;
 
   @Expose()
-  status: FriendStatus;
+  accepted: boolean;
 }

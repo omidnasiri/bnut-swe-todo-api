@@ -20,11 +20,11 @@ GET http://localhost:4000/api/boards/joined
 GET http://localhost:4000/api/boards/suggested
 
 ### Update a board
-PATCH http://localhost:4000/api/boards/7feffe2d-4976-4d9d-96fe-c70460995fde
-Content-Type: : application/json
+PATCH http://localhost:4000/api/boards/7d78ded1-c2dd-4c32-9521-3ef88346de49
+Content-Type: application/json
 
 {
-  "title": "Software Engineering",
+  "title": "University",
   "is_private": true
 }
 
@@ -32,10 +32,10 @@ Content-Type: : application/json
 DELETE http://localhost:4000/api/boards/8a97b8d0-1350-40f5-8bf3-d37aa744e635
 
 ### Join a board
-POST http://localhost:4000/api/boards/join/4c7e81f9-5a3c-4e4a-bd7a-ab742478120a
+POST http://localhost:4000/api/boards/join/bccf6bdf-1467-4543-9926-96913537ddbb
 
 ### leave a board
-DELETE http://localhost:4000/api/boards/join/dcdc5999-a2dc-462e-bf1c-63d58b535ac9
+DELETE http://localhost:4000/api/boards/leave/564475a8-6357-4bcc-99fb-a50f06046324
 
 ### Create a new list
 POST http://localhost:4000/api/boards/lists

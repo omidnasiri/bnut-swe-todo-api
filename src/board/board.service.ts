@@ -92,26 +92,34 @@ export class BoardService {
   async suggested(user: User) {
     const freindsBoards: [] = await this.boardRepo.query(`
       SELECT board_id, title, A.beta_user_id AS friend_id FROM boards JOIN (
-      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.alpha_user_id) A
+      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.alpha_user_id
+      WHERE user_added_friends.status = 2) A
       ON boards.creator_user_id = A.beta_user_id
       WHERE A.alpha_user_id = '${user.user_id}' AND boards.is_private = false
       UNION
       SELECT board_id, title, A.alpha_user_id AS friend_id FROM boards JOIN (
-      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.beta_user_id) A
+      SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.beta_user_id
+      WHERE user_added_friends.status = 2) A
       ON boards.creator_user_id = A.alpha_user_id
       WHERE A.beta_user_id = '${user.user_id}' AND boards.is_private = false
-    `);  
+    `);
+
+    const joinedBoards = await this.userBoardRepo.find({ user_id: user.user_id });
 
     const suggestedBoards = await Promise.all(
       freindsBoards.map(async (board: any) => {
-        const user = await this.userService.findOne(board.friend_id);
-        board.firstname = user.firstname;
-        board.lastname = user.lastname;
-        return board;
+        const joined = joinedBoards.find(e => e.board_id == board.board_id);
+        if (!joined) {
+          const user = await this.userService.findOne(board.friend_id);
+          board.firstname = user.firstname;
+          board.lastname = user.lastname;
+          return board;
+        }
+        return null;
       })
     );
-    
-    return suggestedBoards;
+
+    return suggestedBoards.filter((item) => { return item !== null });
   }
 
   async updateBoard(id: string, dto: CreateBoardDto, user: User) {

@@ -56,4 +56,10 @@ export class UserController {
   async getFriends(@currentUser() user: User) {
     return await this.userService.getFriends(user);
   }
+
+  @Get('/firends/requests')
+  @UseGuards(AuthGuard)
+  async getFriendRequests(@currentUser() user: User) {
+    return await this.userService.getFriendRequests(user);
+  }
 }

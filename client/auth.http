@@ -3,9 +3,9 @@ POST http://localhost:4000/api/auth/signup
 Content-Type: application/json
 
 {
-  "firstname": "omid",
-  "lastname": "nasiri",
-  "email": "omid@gmail.com",
+  "firstname": "hamid",
+  "lastname": "bahmanyar",
+  "email": "hamid@gmail.com",
   "password": "asdf",
   "password_confirm": "asdf"
 }
@@ -15,7 +15,7 @@ POST http://localhost:4000/api/auth/signin
 Content-Type: application/json
 
 {
-  "email": "omid@gmail.com",
+  "email": "hamid@gmail.com",
   "password": "asdf"
 }
 

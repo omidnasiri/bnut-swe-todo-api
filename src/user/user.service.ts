@@ -110,17 +110,12 @@ export class UserService {
       friend = existing[0];
       let check = false;
 
-      if (friend.status === FriendStatus.Neutal && dto.status === FriendStatus.Requseted) check = true;
-      if (friend.status === FriendStatus.Neutal && dto.status === FriendStatus.Blocked) check = true;
+      if (friend.status === FriendStatus.Neutral && dto.status === FriendStatus.Requseted) check = true;
 
       if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Friend) check = true;
-      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Blocked) check = true;
-      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Neutal) check = true;
+      if (friend.status === FriendStatus.Requseted && dto.status === FriendStatus.Neutral) check = true;
 
-      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Neutal) check = true;
-      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Blocked) check = true;
-
-      if (friend.status === FriendStatus.Blocked && dto.status === FriendStatus.Neutal) check = true;
+      if (friend.status === FriendStatus.Friend && dto.status === FriendStatus.Neutral) check = true;
 
       if (!check) throw new BadRequestException('unacceptable status');
       friend.status = dto.status;
@@ -139,26 +134,35 @@ export class UserService {
   async getFriends(user: User) {
     const friends = await this.firendRepo.find({
       where: [
-        { alpha_user_id: user.user_id },
-        { beta_user_id: user.user_id }
+        { alpha_user_id: user.user_id, status: FriendStatus.Friend },
+        { beta_user_id: user.user_id, status: FriendStatus.Friend }
       ]
-    });
-    
-    const friend_ids = friends.map((friend) => {
-      return {
-        friend_id: friend.alpha_user_id == user.user_id ? friend.beta_user_id : friend.alpha_user_id,
-        status: friend.status
-      };
     });
   
     return await Promise.all(
-      friend_ids.map(async (friend) => {
-        const user = await this.userRepo.findOne({ user_id: friend.friend_id});
+      friends.map(async (friend) => {
+        const friend_id = friend.alpha_user_id == user.user_id ? friend.beta_user_id : friend.alpha_user_id
+        const userFriend = await this.userRepo.findOne({ user_id: friend_id});
         return {
-          friends_id: friend.friend_id,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          status: friend.status
+          friend_id,
+          firstname: userFriend.firstname,
+          lastname: userFriend.lastname,
+        }
+      })
+    );
+  }
+
+  async getFriendRequests(user: User) {
+    const friends = await this.firendRepo.find({ beta_user_id: user.user_id, status: FriendStatus.Requseted });
+
+    return await Promise.all(
+      friends.map(async (friend) => {
+        const requested_user_id = friend.alpha_user_id;
+        const userFriend = await this.userRepo.findOne({ user_id: requested_user_id});
+        return {
+          requested_user_id,
+          firstname: userFriend.firstname,
+          lastname: userFriend.lastname,
         }
       })
     );

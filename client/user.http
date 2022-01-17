@@ -25,9 +25,12 @@ POST http://localhost:4000/api/users/firends
 Content-Type: application/json
 
 {
-  "user_id": "250ed542-e613-4f31-81c8-aa018405779e",
+  "user_id": "c72503dd-d673-4307-9bf0-28aea46ac9e8",
   "status": 1
 }
 
 ### Get all friends
 GET http://localhost:4000/api/users/firends
+
+### Get all friend requests
+GET http://localhost:4000/api/users/firends/requests

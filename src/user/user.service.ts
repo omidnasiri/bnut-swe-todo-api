@@ -145,6 +145,7 @@ export class UserService {
         const userFriend = await this.userRepo.findOne({ user_id: friend_id});
         return {
           friend_id,
+          email:userFriend.email,
           firstname: userFriend.firstname,
           lastname: userFriend.lastname,
         }

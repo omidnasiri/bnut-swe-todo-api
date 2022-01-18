@@ -93,13 +93,13 @@ export class BoardService {
     const freindsBoards: [] = await this.boardRepo.query(`
       SELECT board_id, title, A.beta_user_id AS friend_id FROM boards JOIN (
       SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.alpha_user_id
-      WHERE user_added_friends.status = 2) A
+      WHERE user_added_friends.accepted = true) A
       ON boards.creator_user_id = A.beta_user_id
       WHERE A.alpha_user_id = '${user.user_id}' AND boards.is_private = false
       UNION
       SELECT board_id, title, A.alpha_user_id AS friend_id FROM boards JOIN (
       SELECT * FROM user_added_friends JOIN users ON users.user_id = user_added_friends.beta_user_id
-      WHERE user_added_friends.status = 2) A
+      WHERE user_added_friends.accepted = true) A
       ON boards.creator_user_id = A.alpha_user_id
       WHERE A.beta_user_id = '${user.user_id}' AND boards.is_private = false
     `);

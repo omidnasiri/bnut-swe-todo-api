@@ -7,11 +7,11 @@ import {
 import { promisify } from "util";
 import { Repository } from 'typeorm';
 import { User } from './models/user.entity';
+import { Firend } from './models/friend.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignInDto } from 'src/auth/dtos/signin-dto';
 import { SignUpDto } from 'src/auth/dtos/signup-dto';
 import { randomBytes, scrypt as _scrypt } from "crypto";
-import { Firend } from './models/friend.entity';
 import { UpdateUserDto } from './dtos/request-dtos/update-user.dto';
 import { ChangePasswordDto } from './dtos/request-dtos/change-password.dto';
 
@@ -145,9 +145,9 @@ export class UserService {
         const userFriend = await this.userRepo.findOne({ user_id: friend_id});
         return {
           friend_id,
-          email:userFriend.email,
-          firstname: userFriend.firstname,
+          email: userFriend.email,
           lastname: userFriend.lastname,
+          firstname: userFriend.firstname
         }
       })
     );
@@ -162,8 +162,8 @@ export class UserService {
         const userFriend = await this.userRepo.findOne({ user_id: requested_user_id});
         return {
           requested_user_id,
-          firstname: userFriend.firstname,
           lastname: userFriend.lastname,
+          firstname: userFriend.firstname
         }
       })
     );

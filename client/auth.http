@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
   "email": "amin@gmail.com",
-  "password": "asdf"
+  "password": "12345"
 }
 
 ### Get the currently signed is user

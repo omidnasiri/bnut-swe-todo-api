@@ -3,12 +3,12 @@ POST http://localhost:4000/api/boards
 Content-Type: application/json
 
 {
-  "title": "Porn",
+  "title": "University",
   "is_private": true
 }
 
 ### Retrieve a board
-GET http://localhost:4000/api/boards/7feffe2d-4976-4d9d-96fe-c70460995fde
+GET http://localhost:4000/api/boards/5ecc5ac7-b262-4739-9c0f-a902fbbf1b63
 
 ### Get all boards created by a user
 GET http://localhost:4000/api/boards/created

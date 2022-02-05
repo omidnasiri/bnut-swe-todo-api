@@ -43,6 +43,8 @@ export class BoardService {
       })
     );
 
+    members.unshift(await board.creator);
+
     return { board, members };
   }
 
